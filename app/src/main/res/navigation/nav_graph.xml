@@ -18,5 +18,19 @@
         android:id="@+id/tableFragment"
         android:name="rs.ac.bg.etf.monopoly.TableFragment"
         android:label="fragment_table"
-        tools:layout="@layout/fragment_table" />
+        tools:layout="@layout/fragment_table" >
+        <action
+            android:id="@+id/details"
+            app:destination="@id/propertyDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/propertyDetailsFragment"
+        android:name="rs.ac.bg.etf.monopoly.PropertyDetailsFragment"
+        android:label="fragment_property_details"
+        tools:layout="@layout/fragment_property_details" >
+        <argument
+            android:name="index"
+            app:argType="integer"
+            android:defaultValue="0" />
+    </fragment>
 </navigation>
