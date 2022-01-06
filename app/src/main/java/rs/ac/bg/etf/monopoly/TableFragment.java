@@ -57,23 +57,32 @@ public class TableFragment extends Fragment {
             int start=R.id.start;
             amb.getRoot().findViewById(id).setOnClickListener(e->{
                 repo.getProperty(index).observe(getViewLifecycleOwner(),k->{
+                    if(k.getHolder()!=-1&&k.getHolder()!=model.getCurrentUser()&&k.getType()==2 || k.getType()==5){
+                        TableFragmentDirections.Taxes action=TableFragmentDirections.taxes(index);
+                        controller.navigate(action);
+                        return;
+                    }
                     if(k.getHolder()== model.getCurrentUser() && k.getType()==0){
                         TableFragmentDirections.Details action=TableFragmentDirections.details();
                         action.setIndex(index);
                         controller.navigate(action);
+                        return;
                     }
                     if(k.getHolder()== model.getCurrentUser() && (k.getType()==1 || k.getType()==2)){
                         TableFragmentDirections.ToStation action=TableFragmentDirections.toStation(index);
                         controller.navigate(action);
+                        return;
                     }
                     if(k.getHolder()==-1){
                         TableFragmentDirections.Buy action=TableFragmentDirections.buy();
                         action.setIndex(index);
                         controller.navigate(action);
+                        return;
                     }
                     if(k.getHolder()!=-1 && k.getHolder()!=model.getCurrentUser()){
                         TableFragmentDirections.Pay action=TableFragmentDirections.pay(index);
                         controller.navigate(action);
+                        return;
                     }
 
                 });

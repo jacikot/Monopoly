@@ -31,6 +31,9 @@
         <action
             android:id="@+id/pay"
             app:destination="@id/propertyRentFragment" />
+        <action
+            android:id="@+id/taxes"
+            app:destination="@id/propertyPayFragment" />
     </fragment>
     <fragment
         android:id="@+id/propertyDetailsFragment"
@@ -66,6 +69,15 @@
         android:name="rs.ac.bg.etf.monopoly.property.PropertyRentFragment"
         android:label="fragment_property_rent"
         tools:layout="@layout/fragment_property_rent" >
+        <argument
+            android:name="index"
+            app:argType="integer" />
+    </fragment>
+    <fragment
+        android:id="@+id/propertyPayFragment"
+        android:name="rs.ac.bg.etf.monopoly.property.PropertyPayFragment"
+        android:label="fragment_property_pay"
+        tools:layout="@layout/fragment_property_pay" >
         <argument
             android:name="index"
             app:argType="integer" />
