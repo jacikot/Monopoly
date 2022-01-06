@@ -57,6 +57,12 @@ public class TableFragment extends Fragment {
             int start=R.id.start;
             amb.getRoot().findViewById(id).setOnClickListener(e->{
                 repo.getProperty(index).observe(getViewLifecycleOwner(),k->{
+
+                    if(k.getType()==3||k.getType()==4){
+                        TableFragmentDirections.Open action=TableFragmentDirections.open(index);
+                        controller.navigate(action);
+                        return;
+                    }
                     if(k.getHolder()!=-1&&k.getHolder()!=model.getCurrentUser()&&k.getType()==2 || k.getType()==5){
                         TableFragmentDirections.Taxes action=TableFragmentDirections.taxes(index);
                         controller.navigate(action);

@@ -34,6 +34,9 @@
         <action
             android:id="@+id/taxes"
             app:destination="@id/propertyPayFragment" />
+        <action
+            android:id="@+id/open"
+            app:destination="@id/openCardFragment" />
     </fragment>
     <fragment
         android:id="@+id/propertyDetailsFragment"
@@ -78,6 +81,15 @@
         android:name="rs.ac.bg.etf.monopoly.property.PropertyPayFragment"
         android:label="fragment_property_pay"
         tools:layout="@layout/fragment_property_pay" >
+        <argument
+            android:name="index"
+            app:argType="integer" />
+    </fragment>
+    <fragment
+        android:id="@+id/openCardFragment"
+        android:name="rs.ac.bg.etf.monopoly.property.OpenCardFragment"
+        android:label="fragment_open_card"
+        tools:layout="@layout/fragment_open_card" >
         <argument
             android:name="index"
             app:argType="integer" />
