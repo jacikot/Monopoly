@@ -37,6 +37,9 @@
         <action
             android:id="@+id/open"
             app:destination="@id/openCardFragment" />
+        <action
+            android:id="@+id/corner"
+            app:destination="@id/cornerFragment" />
     </fragment>
     <fragment
         android:id="@+id/propertyDetailsFragment"
@@ -90,6 +93,15 @@
         android:name="rs.ac.bg.etf.monopoly.property.OpenCardFragment"
         android:label="fragment_open_card"
         tools:layout="@layout/fragment_open_card" >
+        <argument
+            android:name="index"
+            app:argType="integer" />
+    </fragment>
+    <fragment
+        android:id="@+id/cornerFragment"
+        android:name="rs.ac.bg.etf.monopoly.property.CornerFragment"
+        android:label="fragment_corner"
+        tools:layout="@layout/fragment_corner" >
         <argument
             android:name="index"
             app:argType="integer" />

@@ -23,11 +23,7 @@ import rs.ac.bg.etf.monopoly.databinding.FragmentPropertyPayBinding;
 import rs.ac.bg.etf.monopoly.db.DBMonopoly;
 import rs.ac.bg.etf.monopoly.db.Repository;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link OpenCardFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+
 public class OpenCardFragment extends Fragment {
 
     private FragmentOpenCardBinding amb;

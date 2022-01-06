@@ -58,6 +58,12 @@ public class TableFragment extends Fragment {
             amb.getRoot().findViewById(id).setOnClickListener(e->{
                 repo.getProperty(index).observe(getViewLifecycleOwner(),k->{
 
+                    if(k.getId()%10==0){
+                        TableFragmentDirections.Corner action=TableFragmentDirections.corner(index);
+                        controller.navigate(action);
+                        return;
+                    }
+
                     if(k.getType()==3||k.getType()==4){
                         TableFragmentDirections.Open action=TableFragmentDirections.open(index);
                         controller.navigate(action);
