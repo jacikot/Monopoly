@@ -62,6 +62,15 @@ public class TableFragment extends Fragment {
                         action.setIndex(index);
                         controller.navigate(action);
                     }
+                    if(k.getHolder()== model.getCurrentUser() && k.getType()==1){
+                        TableFragmentDirections.ToStation action=TableFragmentDirections.toStation(index);
+                        controller.navigate(action);
+                    }
+                    if(k.getHolder()==-1){
+                        TableFragmentDirections.Buy action=TableFragmentDirections.buy();
+                        action.setIndex(index);
+                        controller.navigate(action);
+                    }
 
                 });
 

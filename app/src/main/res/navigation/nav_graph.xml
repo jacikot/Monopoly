@@ -22,15 +22,40 @@
         <action
             android:id="@+id/details"
             app:destination="@id/propertyDetailsFragment" />
+        <action
+            android:id="@+id/buy"
+            app:destination="@id/propertyBuyFragment" />
+        <action
+            android:id="@+id/to_station"
+            app:destination="@id/propertyStationFragment" />
     </fragment>
     <fragment
         android:id="@+id/propertyDetailsFragment"
-        android:name="rs.ac.bg.etf.monopoly.PropertyDetailsFragment"
+        android:name="rs.ac.bg.etf.monopoly.property.PropertyDetailsFragment"
         android:label="fragment_property_details"
         tools:layout="@layout/fragment_property_details" >
         <argument
             android:name="index"
             app:argType="integer"
             android:defaultValue="0" />
+    </fragment>
+    <fragment
+        android:id="@+id/propertyBuyFragment"
+        android:name="rs.ac.bg.etf.monopoly.property.PropertyBuyFragment"
+        android:label="fragment_property_buy"
+        tools:layout="@layout/fragment_property_buy" >
+        <argument
+            android:name="index"
+            app:argType="integer"
+            android:defaultValue="0" />
+    </fragment>
+    <fragment
+        android:id="@+id/propertyStationFragment"
+        android:name="rs.ac.bg.etf.monopoly.property.PropertyStationFragment"
+        android:label="fragment_property_station"
+        tools:layout="@layout/fragment_property_station" >
+        <argument
+            android:name="index"
+            app:argType="integer" />
     </fragment>
 </navigation>

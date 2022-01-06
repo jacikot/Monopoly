@@ -3,6 +3,13 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="table">table</string>
+    <string name="nekretnine">Nekretnine:</string>
+    <string name="hotel">Hotel</string>
+    <string name="kuca">Kuca</string>
+    <string name="property_details_home">Kuca:</string>
+    <string name="fragment_details_buy">Kupi</string>
+    <string name="property_details_hotel">"Hotel: "</string>
+    <string name="fragment_details_sell">Prodaj!</string>
 
     <string-array name="fields">
         <item>start</item>
