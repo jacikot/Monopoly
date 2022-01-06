@@ -17,6 +17,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import rs.ac.bg.etf.monopoly.databinding.FragmentTableBinding;
+import rs.ac.bg.etf.monopoly.db.DBMonopoly;
+import rs.ac.bg.etf.monopoly.db.Repository;
 
 
 public class TableFragment extends Fragment {
@@ -25,6 +27,7 @@ public class TableFragment extends Fragment {
     private GameModel model;
     private MainActivity activity;
     private NavController controller;
+    private Repository repo;
 
     public TableFragment() {
         // Required empty public constructor
@@ -35,6 +38,8 @@ public class TableFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activity= (MainActivity) requireActivity();
+        DBMonopoly db=DBMonopoly.getInstance(activity);
+        repo=new Repository(activity,db.getDao());
         model= new ViewModelProvider(activity).get(GameModel.class);
     }
 
@@ -51,9 +56,15 @@ public class TableFragment extends Fragment {
             int index=i;
             int start=R.id.start;
             amb.getRoot().findViewById(id).setOnClickListener(e->{
-                TableFragmentDirections.Details action=TableFragmentDirections.details();
-                action.setIndex(index);
-                controller.navigate(action);
+                repo.getProperty(index).observe(getViewLifecycleOwner(),k->{
+                    if(k.getHolder()== model.getCurrentUser() && k.getType()==0){
+                        TableFragmentDirections.Details action=TableFragmentDirections.details();
+                        action.setIndex(index);
+                        controller.navigate(action);
+                    }
+
+                });
+
             });
         }
         images.recycle();
