@@ -10,17 +10,10 @@
     <string name="fragment_details_buy">Kupi</string>
     <string name="property_details_hotel">"Hotel: "</string>
     <string name="fragment_details_sell">Prodaj!</string>
+    <string name="bez_nekretnina">Bez nekretnina</string>
+    <string name="jedna_kuca">Jedna kuca</string>
+    <string name="dve_kuce">Dve kuce</string>
+    <string name="tri_kuce">Tri kuce</string>
+    <string name="cetiri_kuce">Cetiri kuce</string>
 
-    <string-array name="fields">
-        <item>start</item>
-        <item>ustanicka</item>
-        <item>svetosavska</item>
-        <item>blagajna1</item>
-        <item>start</item>
-        <item>start</item>
-        <item>start</item>
-        <item>start</item>
-        <item>start</item>
-        <item>start</item>
-    </string-array>
 </resources>

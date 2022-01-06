@@ -28,6 +28,9 @@
         <action
             android:id="@+id/to_station"
             app:destination="@id/propertyStationFragment" />
+        <action
+            android:id="@+id/pay"
+            app:destination="@id/propertyRentFragment" />
     </fragment>
     <fragment
         android:id="@+id/propertyDetailsFragment"
@@ -54,6 +57,15 @@
         android:name="rs.ac.bg.etf.monopoly.property.PropertyStationFragment"
         android:label="fragment_property_station"
         tools:layout="@layout/fragment_property_station" >
+        <argument
+            android:name="index"
+            app:argType="integer" />
+    </fragment>
+    <fragment
+        android:id="@+id/propertyRentFragment"
+        android:name="rs.ac.bg.etf.monopoly.property.PropertyRentFragment"
+        android:label="fragment_property_rent"
+        tools:layout="@layout/fragment_property_rent" >
         <argument
             android:name="index"
             app:argType="integer" />

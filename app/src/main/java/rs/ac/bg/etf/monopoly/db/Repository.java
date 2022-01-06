@@ -5,6 +5,8 @@ import android.content.res.TypedArray;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import java.util.List;
+
 import rs.ac.bg.etf.monopoly.MainActivity;
 import rs.ac.bg.etf.monopoly.MyApplication;
 import rs.ac.bg.etf.monopoly.R;
@@ -59,5 +61,9 @@ public class Repository {
             });
 
         }
+    }
+
+    public LiveData<List<Property>> getTypeOfHolder(int h, int t){
+        return property.getTypeOfHolder(h,t);
     }
 }

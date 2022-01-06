@@ -15,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -96,7 +97,7 @@ public class PropertyDetailsFragment extends Fragment {
                     amb.nekretnine.addView(v);
                 }
             }
-
+            amb.nekretnine.setGravity(Gravity.CENTER);
 
         });
 
