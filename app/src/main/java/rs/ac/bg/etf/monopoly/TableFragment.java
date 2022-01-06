@@ -1,10 +1,13 @@
 package rs.ac.bg.etf.monopoly;
 
 import android.content.res.TypedArray;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -51,11 +54,14 @@ public class TableFragment extends Fragment {
         // Inflate the layout for this fragment
         amb=FragmentTableBinding.inflate(inflater,container,false);
         TypedArray images=getResources().obtainTypedArray(R.array.ids);
+
         for(int i=0;i<images.length();i++){
             int id=images.getResourceId(i,0);
             int index=i;
             int start=R.id.start;
+
             amb.getRoot().findViewById(id).setOnClickListener(e->{
+
                 repo.getProperty(index).observe(getViewLifecycleOwner(),k->{
 
                     if(k.getId()%10==0){
@@ -101,6 +107,20 @@ public class TableFragment extends Fragment {
 
             });
         }
+
+//        model.getPossitions()[0]=(int)(Math.random()*40);
+//        model.getPossitions()[1]=(int)(Math.random()*40);
+//        model.getPossitions()[2]=(int)(Math.random()*40);
+//        model.getPossitions()[3]=(int)(Math.random()*40);
+//        ((ImageView)amb.getRoot().findViewById(images.getResourceId(model.getPossitions()[0],0))).setColorFilter(Color.parseColor("#FF8B8B"),
+//                PorterDuff.Mode.MULTIPLY);
+//((ImageView)amb.getRoot().findViewById(images.getResourceId(model.getPossitions()[1],0))).setColorFilter(Color.parseColor("#C77AFF"),
+//                PorterDuff.Mode.MULTIPLY);
+//((ImageView)amb.getRoot().findViewById(images.getResourceId(model.getPossitions()[2],0))).setColorFilter(Color.parseColor("#FF9B66"),
+//                PorterDuff.Mode.MULTIPLY);
+//((ImageView)amb.getRoot().findViewById(images.getResourceId(model.getPossitions()[3],0))).setColorFilter(Color.parseColor("#61914B"),
+//                PorterDuff.Mode.MULTIPLY);
+
         images.recycle();
         return amb.getRoot();
     }

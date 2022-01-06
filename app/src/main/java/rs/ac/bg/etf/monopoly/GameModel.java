@@ -7,6 +7,15 @@ public class GameModel extends ViewModel {
     private int currentUser=3;
     private int dice1=5;
     private int dice2=6;
+    private Integer[] possitions=new Integer[8];
+
+    public Integer[] getPossitions() {
+        return possitions;
+    }
+
+    public void setPossitions(Integer[] possitions) {
+        this.possitions = possitions;
+    }
 
     public int getDice1() {
         return dice1;
