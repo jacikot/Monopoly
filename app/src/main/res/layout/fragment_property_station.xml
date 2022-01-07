@@ -48,10 +48,10 @@
                     android:layout_gravity="center"
                     >
                     <TextView
-                        android:id="@+id/kuca"
+                        android:id="@+id/info"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Ova stanica je u vasem vlasnistvu!"
+                        tools:text="Ova stanica je u vasem vlasnistvu!"
                         android:textAppearance="?attr/textAppearanceBody1"
                         android:textColor="?android:attr/textColorPrimaryInverse"
                         />

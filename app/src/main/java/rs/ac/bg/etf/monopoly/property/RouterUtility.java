@@ -15,9 +15,13 @@ public class RouterUtility {
             controller.navigate(action);
             return;
         }
-        if(property.getType()==1){
-
+        if(property.getType()==1 || property.getType()==2){
+            PropertyBuyFragmentDirections.StationBought action=PropertyBuyFragmentDirections.stationBought(property.getId());
+            action.setUser(user);
+            controller.navigate(action);
+            return;
         }
+
     }
     
     public static void route(NavController controller, Property property, int user){

@@ -71,6 +71,7 @@ public class PropertyDetailsFragment extends Fragment {
             amb.kucaButton.setEnabled(false);
         }
 
+
         amb.kucaButton.setOnClickListener(e->{
             ((MyApplication)activity.getApplication()).getExecutorService().execute(()->{
                 Property p=propertyModel.getPropertyBlocking(args.getIndex());
