@@ -9,12 +9,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -22,15 +24,18 @@ import android.widget.ImageView;
 import rs.ac.bg.etf.monopoly.databinding.FragmentTableBinding;
 import rs.ac.bg.etf.monopoly.db.DBMonopoly;
 import rs.ac.bg.etf.monopoly.db.Repository;
+import rs.ac.bg.etf.monopoly.property.PropertyModel;
+import rs.ac.bg.etf.monopoly.property.RouterUtility;
 
 
 public class TableFragment extends Fragment {
 
     private FragmentTableBinding amb;
     private GameModel model;
+    private PropertyModel propertyModel;
     private MainActivity activity;
     private NavController controller;
-    private Repository repo;
+
 
     public TableFragment() {
         // Required empty public constructor
@@ -42,8 +47,10 @@ public class TableFragment extends Fragment {
         super.onCreate(savedInstanceState);
         activity= (MainActivity) requireActivity();
         DBMonopoly db=DBMonopoly.getInstance(activity);
-        repo=new Repository(activity,db.getDao());
+        Repository repo=new Repository(activity,db.getDao());
+        propertyModel=PropertyModel.getModel(repo, activity);
         model= new ViewModelProvider(activity).get(GameModel.class);
+        model.startGame(4);
     }
 
 
@@ -61,65 +68,34 @@ public class TableFragment extends Fragment {
             int start=R.id.start;
 
             amb.getRoot().findViewById(id).setOnClickListener(e->{
-
-                repo.getProperty(index).observe(getViewLifecycleOwner(),k->{
-
-                    if(k.getId()%10==0){
-                        TableFragmentDirections.Corner action=TableFragmentDirections.corner(index);
-                        controller.navigate(action);
-                        return;
-                    }
-
-                    if(k.getType()==3||k.getType()==4){
-                        TableFragmentDirections.Open action=TableFragmentDirections.open(index);
-                        controller.navigate(action);
-                        return;
-                    }
-                    if(k.getHolder()!=-1&&k.getHolder()!=model.getCurrentUser()&&k.getType()==2 || k.getType()==5){
-                        TableFragmentDirections.Taxes action=TableFragmentDirections.taxes(index);
-                        controller.navigate(action);
-                        return;
-                    }
-                    if(k.getHolder()== model.getCurrentUser() && k.getType()==0){
-                        TableFragmentDirections.Details action=TableFragmentDirections.details();
-                        action.setIndex(index);
-                        controller.navigate(action);
-                        return;
-                    }
-                    if(k.getHolder()== model.getCurrentUser() && (k.getType()==1 || k.getType()==2)){
-                        TableFragmentDirections.ToStation action=TableFragmentDirections.toStation(index);
-                        controller.navigate(action);
-                        return;
-                    }
-                    if(k.getHolder()==-1){
-                        TableFragmentDirections.Buy action=TableFragmentDirections.buy();
-                        action.setIndex(index);
-                        controller.navigate(action);
-                        return;
-                    }
-                    if(k.getHolder()!=-1 && k.getHolder()!=model.getCurrentUser()){
-                        TableFragmentDirections.Pay action=TableFragmentDirections.pay(index);
-                        controller.navigate(action);
-                        return;
-                    }
-
+                propertyModel.getProperty(index).observe(getViewLifecycleOwner(),k->{
+                    RouterUtility.route(controller,k,model.getCurrentUser());
                 });
-
             });
         }
 
-//        model.getPossitions()[0]=(int)(Math.random()*40);
-//        model.getPossitions()[1]=(int)(Math.random()*40);
-//        model.getPossitions()[2]=(int)(Math.random()*40);
-//        model.getPossitions()[3]=(int)(Math.random()*40);
-//        ((ImageView)amb.getRoot().findViewById(images.getResourceId(model.getPossitions()[0],0))).setColorFilter(Color.parseColor("#FF8B8B"),
-//                PorterDuff.Mode.MULTIPLY);
-//((ImageView)amb.getRoot().findViewById(images.getResourceId(model.getPossitions()[1],0))).setColorFilter(Color.parseColor("#C77AFF"),
-//                PorterDuff.Mode.MULTIPLY);
-//((ImageView)amb.getRoot().findViewById(images.getResourceId(model.getPossitions()[2],0))).setColorFilter(Color.parseColor("#FF9B66"),
-//                PorterDuff.Mode.MULTIPLY);
-//((ImageView)amb.getRoot().findViewById(images.getResourceId(model.getPossitions()[3],0))).setColorFilter(Color.parseColor("#61914B"),
-//                PorterDuff.Mode.MULTIPLY);
+        String[]colors=getResources().getStringArray(R.array.colors);
+
+        //pomeranje igraca
+        for(int i=0;i<model.getUserCount();i++){
+            model.getPossitions().get(i).observe(getViewLifecycleOwner(),e->{
+                TypedArray img=getResources().obtainTypedArray(R.array.ids);
+                ((ImageView)amb.getRoot().findViewById(img.getResourceId(model.getOldPossitions().
+                        get(model.getCurrentUser()),0))).clearColorFilter();
+
+                for(int j=0;j<model.getUserCount();j++){
+                    ((ImageView)amb.getRoot().findViewById(img.getResourceId(model.getPossitions().get(j).getValue(),0))).setColorFilter(Color.parseColor(colors[j]),
+                            PorterDuff.Mode.MULTIPLY);
+                }
+                img.recycle();
+            });
+        }
+
+        amb.topAppBar.getMenu().findItem(0).setOnMenuItemClickListener(e->{
+           model.rollTheDice();
+           amb.dices.setText("Kockica1: "+model.getDice1()+" Kockica2"+model.getDice2());
+           return true;
+        });
 
         images.recycle();
         return amb.getRoot();

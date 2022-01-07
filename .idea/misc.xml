@@ -5,6 +5,8 @@
       <map>
         <entry key="..\:/GIT_projekti/monopoly/app/src/main/res/drawable/outline_apartment_20.xml" value="0.14635416666666667" />
         <entry key="..\:/GIT_projekti/monopoly/app/src/main/res/drawable/outline_apartment_24.xml" value="0.14635416666666667" />
+        <entry key="..\:/GIT_projekti/monopoly/app/src/main/res/drawable/outline_arrow_back_24.xml" value="0.14635416666666667" />
+        <entry key="..\:/GIT_projekti/monopoly/app/src/main/res/drawable/outline_casino_24.xml" value="0.14635416666666667" />
         <entry key="..\:/GIT_projekti/monopoly/app/src/main/res/drawable/outline_home_24.xml" value="0.14635416666666667" />
         <entry key="..\:/GIT_projekti/monopoly/app/src/main/res/layout/activity_main.xml" value="0.13020833333333334" />
         <entry key="..\:/GIT_projekti/monopoly/app/src/main/res/layout/fragment_corner.xml" value="0.15260416666666668" />
@@ -15,7 +17,8 @@
         <entry key="..\:/GIT_projekti/monopoly/app/src/main/res/layout/fragment_property_pay.xml" value="0.1" />
         <entry key="..\:/GIT_projekti/monopoly/app/src/main/res/layout/fragment_property_rent.xml" value="0.1" />
         <entry key="..\:/GIT_projekti/monopoly/app/src/main/res/layout/fragment_property_station.xml" value="0.1234375" />
-        <entry key="..\:/GIT_projekti/monopoly/app/src/main/res/layout/fragment_table.xml" value="0.4" />
+        <entry key="..\:/GIT_projekti/monopoly/app/src/main/res/layout/fragment_table.xml" value="0.375" />
+        <entry key="..\:/GIT_projekti/monopoly/app/src/main/res/menu/top_app_bar.xml" value="0.13020833333333334" />
       </map>
     </option>
   </component>

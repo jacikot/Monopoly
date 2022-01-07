@@ -31,7 +31,7 @@ public class Repository {
     }
 
 
-    public void initDB(){
+    public void initProperties(){
         TypedArray type=activity.getResources().obtainTypedArray(R.array.type);
         TypedArray group=activity.getResources().obtainTypedArray(R.array.group);
         TypedArray price=activity.getResources().obtainTypedArray(R.array.price);

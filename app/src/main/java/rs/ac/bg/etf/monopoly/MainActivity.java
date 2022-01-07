@@ -6,7 +6,6 @@ import android.os.Bundle;
 
 import rs.ac.bg.etf.monopoly.databinding.ActivityMainBinding;
 import rs.ac.bg.etf.monopoly.db.DBMonopoly;
-import rs.ac.bg.etf.monopoly.db.Property;
 import rs.ac.bg.etf.monopoly.db.Repository;
 
 public class MainActivity extends AppCompatActivity {
@@ -24,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
         Repository repo=new Repository(this,database.getDao());
         repo.getProperty(0).observe(this,e->{
             if(e==null){
-                repo.initDB();
+                repo.initProperties();
             }
         });
     }
