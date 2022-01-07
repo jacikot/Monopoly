@@ -38,8 +38,16 @@ public class Repository {
         return property.getPropertyBlocking(id);
     }
 
+    public void update(Property p){
+        ((MyApplication)activity.getApplication()).getExecutorService().execute(()->{
+            property.update(p);
+        });
+    }
 
-    public void initProperties(){
+
+
+
+    public void initProperties(boolean insert){
         TypedArray type=activity.getResources().obtainTypedArray(R.array.type);
         TypedArray group=activity.getResources().obtainTypedArray(R.array.group);
         TypedArray price=activity.getResources().obtainTypedArray(R.array.price);
@@ -54,7 +62,7 @@ public class Repository {
         for(int j=0;j<type.length();j++){
             int i=j;
             ((MyApplication)activity.getApplication()).getExecutorService().execute(()->{
-                property.insert(new Property(i,
+                Property p=new Property(i,
                         type.getInt(i,0),
                         group.getInt(i,0),
                         price.getInt(i,0),
@@ -65,7 +73,9 @@ public class Repository {
                         z4.getInt(i,0),
                         z5.getInt(i,0),
                         z6.getInt(i,0)
-                ));
+                );
+                if(insert)property.insert(p);
+                else property.update(p);
             });
 
         }

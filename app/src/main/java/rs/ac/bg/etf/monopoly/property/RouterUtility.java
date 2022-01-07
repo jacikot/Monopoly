@@ -28,6 +28,7 @@ public class RouterUtility {
         if(property.getHolder()== user && property.getType()==0){
             TableFragmentDirections.Details action=TableFragmentDirections.details();
             action.setIndex(index);
+            action.setUser(user);
             controller.navigate(action);
             return;
         }
@@ -39,6 +40,7 @@ public class RouterUtility {
         if(property.getHolder()==-1){
             TableFragmentDirections.Buy action=TableFragmentDirections.buy();
             action.setIndex(index);
+            action.setUser(user);
             controller.navigate(action);
             return;
         }

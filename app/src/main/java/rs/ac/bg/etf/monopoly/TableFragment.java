@@ -59,9 +59,9 @@ public class TableFragment extends Fragment {
             int e=model.getNextGame();
             List<Player> list=new ArrayList<>();
             list.add(new Player(0,e,"Jana",1500,0,0));
-            list.add(new Player(1,e,"Lana",1500,0,0));
-            list.add(new Player(2,e,"Nana",1500,0,0));
-            list.add(new Player(3,e,"Gana",1500,0,0));
+//            list.add(new Player(1,e,"Lana",1500,0,0));
+//            list.add(new Player(2,e,"Nana",1500,0,0));
+//            list.add(new Player(3,e,"Gana",1500,0,0));
             model.startGame(list);
         });
 
@@ -76,7 +76,7 @@ public class TableFragment extends Fragment {
         // Inflate the layout for this fragment
         amb=FragmentTableBinding.inflate(inflater,container,false);
         TypedArray images=getResources().obtainTypedArray(R.array.ids);
-
+        Handler mainHanfler=new Handler(Looper.getMainLooper());
         for(int i=0;i<images.length();i++){
             int id=images.getResourceId(i,0);
             int index=i;
@@ -84,7 +84,12 @@ public class TableFragment extends Fragment {
 
             amb.getRoot().findViewById(id).setOnClickListener(e->{
                 propertyModel.getProperty(index).observe(getViewLifecycleOwner(),k->{
-                    RouterUtility.route(controller,k, model.getCurrentUser());
+                    ((MyApplication)activity.getApplication()).getExecutorService().execute(()-> {
+                        Player p=model.getPlayer(model.getLastPlayer());
+                        if(p.getPosition()!=index) model.setAbleToBuy(false);
+                        else model.setAbleToBuy(true);
+                        mainHanfler.post(()->RouterUtility.route(controller,k, model.getLastPlayer()));
+                    });
                 });
             });
         }
@@ -99,7 +104,6 @@ public class TableFragment extends Fragment {
                 ((ImageView)amb.getRoot().findViewById(img.getResourceId(e.get(j).getPosition(),0))).setColorFilter(Color.parseColor(colors[j]),
                         PorterDuff.Mode.MULTIPLY);
             }
-            //RouterUtility.route(controller,k,model.getCurrentUser());
             img.recycle();
         });
 
@@ -110,15 +114,15 @@ public class TableFragment extends Fragment {
         model.getDice2().observe(getViewLifecycleOwner(),e->{
             amb.dices2.setText("Kockica 2: "+e);
         });
-        Handler mainHanfler=new Handler(Looper.getMainLooper());
 
         amb.topAppBar.getMenu().findItem(0).setOnMenuItemClickListener(e->{
             ((MyApplication)activity.getApplication()).getExecutorService().execute(()->{
                 Player p=model.rollTheDice(TableFragment.this);
                 Property property=propertyModel.getPropertyBlocking(p.getPosition());
+                model.setAbleToBuy(true);
                 SystemClock.sleep(4000);
                 mainHanfler.post(()->{
-                    RouterUtility.route(controller ,property,(model.getCurrentUser()+model.getUserCount())% model.getUserCount());
+                    RouterUtility.route(controller ,property, model.getLastPlayer());
                 });
             });
 

@@ -21,8 +21,15 @@ public class PropertyModel extends ViewModel {
         this.repo = repo;
     }
 
+    public void startGame(){
+        repo.initProperties(false);
+    }
+
     public void insert(Property p){
         repo.insert(p);
+    }
+    public void update(Property p){
+        repo.update(p);
     }
 
     public LiveData<Property> getProperty(int id){
@@ -33,7 +40,7 @@ public class PropertyModel extends ViewModel {
         return repo.getPropertyBlocking(id);
     }
     public void initDB(){
-        repo.initProperties();
+        repo.initProperties(true);
     }
 
     public LiveData<List<Property>> getTypeOfHolder(int h, int t){

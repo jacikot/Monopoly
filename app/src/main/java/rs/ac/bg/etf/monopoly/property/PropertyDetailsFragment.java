@@ -13,6 +13,8 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,9 +23,12 @@ import android.widget.ImageView;
 
 import rs.ac.bg.etf.monopoly.GameModel;
 import rs.ac.bg.etf.monopoly.MainActivity;
+import rs.ac.bg.etf.monopoly.MyApplication;
 import rs.ac.bg.etf.monopoly.R;
 import rs.ac.bg.etf.monopoly.databinding.FragmentPropertyDetailsBinding;
 import rs.ac.bg.etf.monopoly.db.DBMonopoly;
+import rs.ac.bg.etf.monopoly.db.Player;
+import rs.ac.bg.etf.monopoly.db.Property;
 import rs.ac.bg.etf.monopoly.db.Repository;
 
 
@@ -31,6 +36,7 @@ public class PropertyDetailsFragment extends Fragment {
 
     private FragmentPropertyDetailsBinding amb;
     private GameModel model;
+    private PropertyModel propertyModel;
     private MainActivity activity;
     private NavController controller;
     private Repository repo;
@@ -46,7 +52,8 @@ public class PropertyDetailsFragment extends Fragment {
         activity= (MainActivity) requireActivity();
         DBMonopoly db=DBMonopoly.getInstance(activity);
         repo=new Repository(activity,db.getDaoProperty(), db.getDaoPlayer());
-        model= new ViewModelProvider(activity).get(GameModel.class);
+        model= GameModel.getModel(repo,activity);
+        propertyModel=PropertyModel.getModel(repo,activity);
     }
 
     @Override
@@ -59,12 +66,62 @@ public class PropertyDetailsFragment extends Fragment {
         amb.posed.setImageDrawable(images.getDrawable(args.getIndex()));
         images.recycle();
 
+        if(!model.isAbleToBuy()||model.isBought()){
+            amb.hotelButton.setEnabled(false);
+            amb.kucaButton.setEnabled(false);
+        }
+
+        amb.kucaButton.setOnClickListener(e->{
+            ((MyApplication)activity.getApplication()).getExecutorService().execute(()->{
+                Property p=propertyModel.getPropertyBlocking(args.getIndex());
+                if(p.getHouses()<4){
+                    model.setBought(true);
+                    amb.kucaButton.setEnabled(false);
+                    p.setHouses(p.getHouses()+1);
+                    propertyModel.update(p);
+                    Player player=model.getPlayer(args.getUser());
+                    player.setMoney(player.getMoney()-p.getBuilding_price());
+                }
+            });
+        });
+
+        amb.hotelButton.setOnClickListener(e->{
+            ((MyApplication)activity.getApplication()).getExecutorService().execute(()->{
+                Property p=propertyModel.getPropertyBlocking(args.getIndex());
+                if(p.getHouses()==4){
+                    model.setBought(true);
+                    amb.hotelButton.setEnabled(false);
+                    p.setHouses(p.getHouses()+1);
+                    propertyModel.update(p);
+                    Player player=model.getPlayer(args.getUser());
+                    player.setMoney(player.getMoney()-p.getBuilding_price());
+                }
+            });
+        });
+
+        Handler h= new Handler(Looper.getMainLooper());
+        amb.prodaj.setOnClickListener(e->{
+            ((MyApplication)activity.getApplication()).getExecutorService().execute(()->{
+                Property p=propertyModel.getPropertyBlocking(args.getIndex());
+                Player player=model.getPlayer(args.getUser());
+                player.setMoney(player.getMoney()+(p.getProperty_price()+p.getBuilding_price()*p.getHouses())/2);
+                p.setHolder(-1);
+                p.setHouses(-1);
+                propertyModel.update(p);
+                model.update(player);
+                h.post(()->{
+                   controller.navigateUp();
+                });
+                model.setBought(true);
+            });
+        });
+
         repo.getProperty(args.getIndex()).observe(getViewLifecycleOwner(),e->{
-            if(amb.nekretnine.getChildCount()>1)
+            if(amb.nekretnine.getChildCount()>0)
                 amb.nekretnine.removeViews(0,amb.nekretnine.getChildCount());
-            amb.kuca.setText(amb.kuca.getText()+"("+e.getBuilding_price()+"M) =>");
-            amb.hotel.setText(amb.hotel.getText()+"("+e.getBuilding_price()+"M) =>");
-            amb.prodaj.setText(amb.prodaj.getText() + "("+e.getProperty_price()/2+"M)");
+            amb.kuca.setText("Jedna kuca "+"("+e.getBuilding_price()+"M) =>");
+            amb.hotel.setText("Jedan hotel "+"("+e.getBuilding_price()+"M) =>");
+            amb.prodaj.setText("Prodaj " + "("+(e.getProperty_price()+e.getHouses()*e.getBuilding_price())/2+"M)");
             if(e.getHouses()>4){
                 //izbaci kuce
                 ImageView v=new ImageView(activity);
@@ -97,7 +154,9 @@ public class PropertyDetailsFragment extends Fragment {
 
         });
 
-
+        amb.topAppBar.setNavigationOnClickListener(e->{
+            controller.navigateUp();
+        });
 
         return amb.getRoot();
     }

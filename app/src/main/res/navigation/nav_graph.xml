@@ -50,6 +50,10 @@
             android:name="index"
             app:argType="integer"
             android:defaultValue="0" />
+        <argument
+            android:name="user"
+            app:argType="integer"
+            android:defaultValue="0" />
     </fragment>
     <fragment
         android:id="@+id/propertyBuyFragment"
@@ -60,6 +64,14 @@
             android:name="index"
             app:argType="integer"
             android:defaultValue="0" />
+        <argument
+            android:name="user"
+            app:argType="integer"
+            android:defaultValue="0" />
+        <action
+            android:id="@+id/bought"
+            app:destination="@id/propertyDetailsFragment"
+            app:popUpTo="@id/tableFragment" />
     </fragment>
     <fragment
         android:id="@+id/propertyStationFragment"

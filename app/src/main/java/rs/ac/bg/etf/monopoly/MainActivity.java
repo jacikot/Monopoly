@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
         Repository repo=new Repository(this,database.getDaoProperty(),database.getDaoPlayer());
         repo.getProperty(0).observe(this,e->{
             if(e==null){
-                repo.initProperties();
+                repo.initProperties(true);
             }
         });
     }

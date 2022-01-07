@@ -10,21 +10,27 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import rs.ac.bg.etf.monopoly.GameModel;
 import rs.ac.bg.etf.monopoly.MainActivity;
+import rs.ac.bg.etf.monopoly.MyApplication;
 import rs.ac.bg.etf.monopoly.R;
 import rs.ac.bg.etf.monopoly.databinding.FragmentPropertyBuyBinding;
 import rs.ac.bg.etf.monopoly.db.DBMonopoly;
+import rs.ac.bg.etf.monopoly.db.Player;
+import rs.ac.bg.etf.monopoly.db.Property;
 import rs.ac.bg.etf.monopoly.db.Repository;
 
 public class PropertyBuyFragment extends Fragment {
 
     private FragmentPropertyBuyBinding amb;
-    private GameModel model;
+    private GameModel gameModel;
+    private PropertyModel propertyModel;
     private MainActivity activity;
     private NavController controller;
     private Repository repo;
@@ -40,7 +46,8 @@ public class PropertyBuyFragment extends Fragment {
         activity= (MainActivity) requireActivity();
         DBMonopoly db=DBMonopoly.getInstance(activity);
         repo=new Repository(activity,db.getDaoProperty(),db.getDaoPlayer());
-        model= new ViewModelProvider(activity).get(GameModel.class);
+        gameModel= GameModel.getModel(repo,activity);
+        propertyModel=PropertyModel.getModel(repo,activity);
     }
 
     @Override
@@ -49,12 +56,38 @@ public class PropertyBuyFragment extends Fragment {
         // Inflate the layout for this fragment
         amb=FragmentPropertyBuyBinding.inflate(inflater,container,false);
         TypedArray images=getResources().obtainTypedArray(R.array.images_details);
-        PropertyDetailsFragmentArgs args=PropertyDetailsFragmentArgs.fromBundle(getArguments());
+        PropertyBuyFragmentArgs args=PropertyBuyFragmentArgs.fromBundle(getArguments());
         amb.posed.setImageDrawable(images.getDrawable(args.getIndex()));
         images.recycle();
 
         repo.getProperty(args.getIndex()).observe(getViewLifecycleOwner(),e->{
             amb.kupi.setText(amb.kupi.getText()+"("+e.getProperty_price()+"M)");
+        });
+        Handler handler= new Handler(Looper.getMainLooper());
+        if(!gameModel.isAbleToBuy()||gameModel.isBought()){
+            amb.kupi.setEnabled(false);
+        }
+        amb.kupi.setOnClickListener(e->{
+            ((MyApplication)activity.getApplication()).getExecutorService().execute(()->{
+                Property p=propertyModel.getPropertyBlocking(args.getIndex());
+                p.setHouses(0);
+                p.setHolder(gameModel.getLastPlayer());
+                propertyModel.update(p);
+                Player player=gameModel.getPlayer(args.getUser());
+                player.setMoney(player.getMoney()-p.getProperty_price());
+                gameModel.update(player);
+                gameModel.setBought(true);
+                handler.post(()->{
+                   PropertyBuyFragmentDirections.Bought action=PropertyBuyFragmentDirections.bought();
+                   action.setIndex(args.getIndex());
+                   action.setUser(args.getUser());
+                   controller.navigate(action);
+                });
+            });
+        });
+
+        amb.topAppBar.setNavigationOnClickListener(e->{
+            controller.navigateUp();
         });
 
 

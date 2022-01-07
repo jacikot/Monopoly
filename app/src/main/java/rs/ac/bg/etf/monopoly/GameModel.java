@@ -27,11 +27,31 @@ public class GameModel extends ViewModel {
     private static final String  KEY_DICE="dice";
 
     private int currentUser;
+    private int lastPlayed=0;
     private LiveData<Integer> dice1;
     private LiveData<Integer> dice2;
     private int attempts=0;
     private int oldPossition=0;
     private int currentGame;
+    private boolean ableToBuy;
+    private boolean bought;
+
+    public void setBought(boolean bought) {
+        this.bought = bought;
+    }
+
+    public boolean isBought() {
+        return bought;
+    }
+
+    public boolean isAbleToBuy() {
+        return ableToBuy;
+    }
+
+    public void setAbleToBuy(boolean ableToBuy) {
+        this.ableToBuy = ableToBuy;
+    }
+
     private int playerCnt;
     private SavedStateHandle ssh;
     private Repository repo;
@@ -52,6 +72,10 @@ public class GameModel extends ViewModel {
         return repo.getNextGame();
     }
 
+    public void update(Player p){
+        repo.updatePlayer(p);
+    }
+
     public void startGame(List<Player> players){
         currentGame=players.get(0).getGame();
         playerCnt=players.size();
@@ -61,6 +85,9 @@ public class GameModel extends ViewModel {
             players.get(i).setPrison(0);
         }
         repo.insertPlayer(players);
+        repo.initProperties(false);
+        ableToBuy=false;
+        bought=false;
     }
 
     public void finishGame(){
@@ -78,8 +105,11 @@ public class GameModel extends ViewModel {
 
 
     public Player rollTheDice(LifecycleOwner o){
-        int dice1=((int)(Math.random()*6))+1;
-        int dice2=((int)(Math.random()*6))+1;
+        bought=false;
+//        int dice1=((int)(Math.random()*6))+1;
+//        int dice2=((int)(Math.random()*6))+1;
+        int dice1=5;
+        int dice2=3;
         android.os.Handler mainHanfler=new Handler(Looper.getMainLooper());
         mainHanfler.post(()->{
             ssh.set(KEY_DICE+1,dice1);
@@ -88,6 +118,7 @@ public class GameModel extends ViewModel {
         AtomicReference<Player> e=new AtomicReference<>();
         AtomicBoolean finish=new AtomicBoolean(false);
         while(!finish.get()){
+            lastPlayed=currentUser;
             e.set(repo.getPlayer(currentUser,currentGame));
             if(e.get().getPrison()>0){
                 e.get().setPrison(e.get().getPrison()-1);
@@ -146,6 +177,10 @@ public class GameModel extends ViewModel {
 
     public int getCurrentUser() {
         return currentUser;
+    }
+
+    public int getLastPlayer() {
+        return lastPlayed;
     }
 
     public void setCurrentUser(int currentUser) {

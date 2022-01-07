@@ -4,11 +4,15 @@ import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import java.util.List;
 
 @Dao
 public interface PropertyDAO {
+
+    @Update
+    public void update(Property p);
 
     @Insert
     public void insert(Property p);
