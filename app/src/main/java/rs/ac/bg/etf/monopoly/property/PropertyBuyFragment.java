@@ -15,6 +15,7 @@ import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import rs.ac.bg.etf.monopoly.GameModel;
 import rs.ac.bg.etf.monopoly.MainActivity;
@@ -70,17 +71,25 @@ public class PropertyBuyFragment extends Fragment {
         amb.kupi.setOnClickListener(e->{
             ((MyApplication)activity.getApplication()).getExecutorService().execute(()->{
                 Property p=propertyModel.getPropertyBlocking(args.getIndex());
-                p.setHouses(0);
-                p.setHolder(gameModel.getLastPlayer());
-                propertyModel.update(p);
                 Player player=gameModel.getPlayer(args.getUser());
-                player.setMoney(player.getMoney()-p.getProperty_price());
-                gameModel.update(player);
-                gameModel.setBought(true);
-                handler.post(()->{
-                    RouterUtility.routeBuy(controller,p,player.getIndex());
+                if(p.getProperty_price()<=player.getMoney()){
+                    p.setHouses(0);
+                    p.setHolder(gameModel.getLastPlayer());
+                    propertyModel.update(p);
 
-                });
+                    player.setMoney(player.getMoney()-p.getProperty_price());
+                    gameModel.update(player);
+                    gameModel.setBought(true);
+                    handler.post(()->{
+                        RouterUtility.routeBuy(controller,p,player.getIndex());
+
+                    });
+                }
+                else {
+                    handler.post(()-> Toast.makeText(activity,"Nemate dovoljno novca!",Toast.LENGTH_SHORT).show());
+                }
+
+
             });
         });
 

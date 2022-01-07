@@ -39,6 +39,7 @@ public class RouterUtility {
         }
         if(property.getHolder()!=-1&&property.getHolder()!=user&&property.getType()==2 || property.getType()==5){
             TableFragmentDirections.Taxes action=TableFragmentDirections.taxes(index);
+            action.setUser(user);
             controller.navigate(action);
             return;
         }
@@ -51,6 +52,7 @@ public class RouterUtility {
         }
         if(property.getHolder()== user && (property.getType()==1 || property.getType()==2)){
             TableFragmentDirections.ToStation action=TableFragmentDirections.toStation(index);
+            action.setUser(user);
             controller.navigate(action);
             return;
         }

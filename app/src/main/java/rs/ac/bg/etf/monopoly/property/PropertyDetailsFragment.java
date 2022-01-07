@@ -20,6 +20,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import rs.ac.bg.etf.monopoly.GameModel;
 import rs.ac.bg.etf.monopoly.MainActivity;
@@ -71,36 +72,53 @@ public class PropertyDetailsFragment extends Fragment {
             amb.kucaButton.setEnabled(false);
         }
 
+        Handler h=new Handler(Looper.getMainLooper());
 
         amb.kucaButton.setOnClickListener(e->{
             ((MyApplication)activity.getApplication()).getExecutorService().execute(()->{
                 Property p=propertyModel.getPropertyBlocking(args.getIndex());
-                if(p.getHouses()<4){
-                    model.setBought(true);
-                    amb.kucaButton.setEnabled(false);
-                    p.setHouses(p.getHouses()+1);
-                    propertyModel.update(p);
+                if(propertyModel.ownsAllSameColor(args.getUser(),p.getGroup())&&p.getHouses()<4){
                     Player player=model.getPlayer(args.getUser());
-                    player.setMoney(player.getMoney()-p.getBuilding_price());
+                    if(p.getBuilding_price()<= player.getMoney()) {
+                        model.setBought(true);
+                        amb.kucaButton.setEnabled(false);
+                        p.setHouses(p.getHouses() + 1);
+                        propertyModel.update(p);
+                        player.setMoney(player.getMoney() - p.getBuilding_price());
+                    }
+                    else {
+                        h.post(()-> Toast.makeText(activity,"Nemate dovoljno novca!",Toast.LENGTH_SHORT).show());
+                    }
+                }
+                else{
+                    h.post(()-> Toast.makeText(activity,"Ne posedujete sve posede ove grupe!",Toast.LENGTH_SHORT).show());
                 }
             });
         });
+
+
 
         amb.hotelButton.setOnClickListener(e->{
             ((MyApplication)activity.getApplication()).getExecutorService().execute(()->{
                 Property p=propertyModel.getPropertyBlocking(args.getIndex());
                 if(p.getHouses()==4){
-                    model.setBought(true);
-                    amb.hotelButton.setEnabled(false);
-                    p.setHouses(p.getHouses()+1);
-                    propertyModel.update(p);
                     Player player=model.getPlayer(args.getUser());
-                    player.setMoney(player.getMoney()-p.getBuilding_price());
+                    if(p.getBuilding_price()> player.getMoney()){
+                        model.setBought(true);
+                        amb.hotelButton.setEnabled(false);
+                        p.setHouses(p.getHouses()+1);
+                        propertyModel.update(p);
+                        player.setMoney(player.getMoney()-p.getBuilding_price());
+                    }
+                    else {
+                        h.post(()-> Toast.makeText(activity,"Nemate dovoljno novca!",Toast.LENGTH_SHORT).show());
+                    }
+
                 }
             });
         });
 
-        Handler h= new Handler(Looper.getMainLooper());
+
         amb.prodaj.setOnClickListener(e->{
             ((MyApplication)activity.getApplication()).getExecutorService().execute(()->{
                 Property p=propertyModel.getPropertyBlocking(args.getIndex());
@@ -161,6 +179,7 @@ public class PropertyDetailsFragment extends Fragment {
 
         return amb.getRoot();
     }
+
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {

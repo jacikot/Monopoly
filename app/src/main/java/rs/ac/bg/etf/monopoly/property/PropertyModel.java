@@ -47,6 +47,16 @@ public class PropertyModel extends ViewModel {
         return repo.getTypeOfHolder(h,t);
     }
 
+    public List<Property> getTypeOfHolderBlocking(int h, int t){
+        return repo.getTypeOfHolderBlocking(h,t);
+    }
+
+    public boolean ownsAllSameColor(int holder,int color){
+       return repo.getTypeOfHolderBlocking(holder,0).stream().filter(e->{
+            return e.getGroup()==color;
+        }).count()==repo.getCountSameColor(color);
+    }
+
     public static PropertyModel getModel(Repository repo, MainActivity activity){
         ViewModelProvider.Factory factory=new ViewModelProvider.Factory() {
             @NonNull

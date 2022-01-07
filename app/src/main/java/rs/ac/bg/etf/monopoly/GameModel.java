@@ -35,6 +35,15 @@ public class GameModel extends ViewModel {
     private int currentGame;
     private boolean ableToBuy;
     private boolean bought;
+    private boolean paid=true;
+
+    public boolean isPaid() {
+        return paid;
+    }
+
+    public void setPaid(boolean paid) {
+        this.paid = paid;
+    }
 
     public void setBought(boolean bought) {
         this.bought = bought;
@@ -108,8 +117,8 @@ public class GameModel extends ViewModel {
         bought=false;
 //        int dice1=((int)(Math.random()*6))+1;
 //        int dice2=((int)(Math.random()*6))+1;
-        int dice1=6;
-        int dice2=6;
+        int dice1=5;
+        int dice2=3;
         android.os.Handler mainHanfler=new Handler(Looper.getMainLooper());
         mainHanfler.post(()->{
             ssh.set(KEY_DICE+1,dice1);

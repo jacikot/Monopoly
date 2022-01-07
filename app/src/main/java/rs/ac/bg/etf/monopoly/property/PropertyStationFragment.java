@@ -87,7 +87,9 @@ public class PropertyStationFragment extends Fragment {
             });
         });
 
-
+        amb.topAppBar.setNavigationOnClickListener(e->{
+            controller.navigateUp();
+        });
 
         return amb.getRoot();
     }

@@ -19,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -116,15 +117,19 @@ public class TableFragment extends Fragment {
         });
 
         amb.topAppBar.getMenu().findItem(0).setOnMenuItemClickListener(e->{
-            ((MyApplication)activity.getApplication()).getExecutorService().execute(()->{
-                Player p=model.rollTheDice(TableFragment.this);
-                Property property=propertyModel.getPropertyBlocking(p.getPosition());
-                model.setAbleToBuy(true);
-                SystemClock.sleep(4000);
-                mainHanfler.post(()->{
-                    RouterUtility.route(controller ,property, model.getLastPlayer());
+            if(model.isPaid()){
+                ((MyApplication)activity.getApplication()).getExecutorService().execute(()->{
+                    Player p=model.rollTheDice(TableFragment.this);
+                    Property property=propertyModel.getPropertyBlocking(p.getPosition());
+                    model.setAbleToBuy(true);
+                    SystemClock.sleep(4000);
+                    mainHanfler.post(()->{
+                        RouterUtility.route(controller ,property, model.getLastPlayer());
+                    });
                 });
-            });
+            }
+            else Toast.makeText(activity,"Niste platili dazbine!",Toast.LENGTH_SHORT).show();
+
 
 
            return true;

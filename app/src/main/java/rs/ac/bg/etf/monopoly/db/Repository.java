@@ -85,6 +85,14 @@ public class Repository {
         return property.getTypeOfHolder(h,t);
     }
 
+    public List<Property> getTypeOfHolderBlocking(int h, int t){
+        return property.getTypeOfHolderBlocking(h,t);
+    }
+
+    public int getCountSameColor(int color){
+        return property.getSameColorCnt(color);
+    }
+
     public int getNextGame(){
         return player.getNextGame();
     }

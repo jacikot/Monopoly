@@ -72,7 +72,7 @@
                     android:id="@+id/prodaj"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Prodaj "
+                    android:text="Plati "
                     android:textSize="25sp"
                     style="?attr/borderlessButtonStyle"
                     android:textColor="#B71C1C"

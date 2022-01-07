@@ -10,21 +10,28 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import rs.ac.bg.etf.monopoly.GameModel;
 import rs.ac.bg.etf.monopoly.MainActivity;
+import rs.ac.bg.etf.monopoly.MyApplication;
 import rs.ac.bg.etf.monopoly.R;
 import rs.ac.bg.etf.monopoly.databinding.FragmentPropertyPayBinding;
 import rs.ac.bg.etf.monopoly.db.DBMonopoly;
+import rs.ac.bg.etf.monopoly.db.Player;
+import rs.ac.bg.etf.monopoly.db.Property;
 import rs.ac.bg.etf.monopoly.db.Repository;
 
 
 public class PropertyPayFragment extends Fragment {
     private FragmentPropertyPayBinding amb;
     private GameModel model;
+    private PropertyModel propertyModel;
     private MainActivity activity;
     private NavController controller;
     private Repository repo;
@@ -40,7 +47,8 @@ public class PropertyPayFragment extends Fragment {
         activity= (MainActivity) requireActivity();
         DBMonopoly db=DBMonopoly.getInstance(activity);
         repo=new Repository(activity,db.getDaoProperty(),db.getDaoPlayer());
-        model= new ViewModelProvider(activity).get(GameModel.class);
+        model= GameModel.getModel(repo,activity);
+        propertyModel=PropertyModel.getModel(repo,activity);
     }
 
     @Override
@@ -81,6 +89,43 @@ public class PropertyPayFragment extends Fragment {
 
 
 
+        });
+
+        Handler h=new Handler(Looper.getMainLooper());
+
+        if(!model.isAbleToBuy()||model.isBought()){
+            amb.prodaj.setEnabled(false);
+        }
+        else model.setPaid(false);
+
+        amb.prodaj.setOnClickListener(e->{
+            ((MyApplication)activity.getApplication()).getExecutorService().execute(()->{
+                Property p=propertyModel.getPropertyBlocking(args.getIndex());
+                Player player=model.getPlayer(args.getUser());
+                int price=0;
+                if(p.getType()==5)price=p.getRent_l0();
+                else {
+                    price=((propertyModel.getTypeOfHolderBlocking(player.getIndex(),p.getType()).size()==1)?4:10)
+                            *(model.getDice1().getValue()+model.getDice2().getValue());
+
+                }
+
+                if(price<=player.getMoney()){
+                    player.setMoney(player.getMoney()-price);
+                    model.update(player);
+                    h.post(()->{
+                        controller.navigateUp();
+                    });
+                    model.setBought(true);
+                    model.setPaid(true);
+                }
+                else {
+                    //ovo treba da bude kompleksniji uslov
+                    //provera da li je bankrot
+                    h.post(()->Toast.makeText(activity,"Nemate dovoljno novca!",Toast.LENGTH_SHORT).show());
+                }
+
+            });
         });
 
 

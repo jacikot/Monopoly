@@ -8,6 +8,17 @@
     android:background="@drawable/backgound"
     >
 
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/topAppBar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:title="Property"
+        app:navigationIcon="@drawable/outline_arrow_back_24"
+        style="@style/Widget.MaterialComponents.Toolbar.Surface"
+        android:backgroundTint="#59372D"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/card"
         android:layout_width="match_parent"

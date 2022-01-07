@@ -25,4 +25,10 @@ public interface PropertyDAO {
 
     @Query("SELECT * FROM Property WHERE holder=:h AND type=:type")
     public LiveData<List<Property>> getTypeOfHolder(int h, int type);
+
+    @Query("SELECT * FROM Property WHERE holder=:h AND type=:type")
+    public List<Property> getTypeOfHolderBlocking(int h, int type);
+
+    @Query("SELECT COUNT(*) FROM Property WHERE `group`=:color")
+    public int getSameColorCnt(int color);
 }
