@@ -16,6 +16,8 @@ import android.view.ViewGroup;
 
 import rs.ac.bg.etf.monopoly.databinding.FragmentHomeBinding;
 import rs.ac.bg.etf.monopoly.databinding.FragmentTableBinding;
+import rs.ac.bg.etf.monopoly.db.DBMonopoly;
+import rs.ac.bg.etf.monopoly.db.Repository;
 
 
 public class HomeFragment extends Fragment {
@@ -34,7 +36,9 @@ public class HomeFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activity= (MainActivity) requireActivity();
-        model= new ViewModelProvider(activity).get(GameModel.class);
+        DBMonopoly db=DBMonopoly.getInstance(activity);
+        Repository repo=new Repository(activity,db.getDaoProperty(),db.getDaoPlayer());
+        model= GameModel.getModel(repo,activity);
     }
 
     @Override

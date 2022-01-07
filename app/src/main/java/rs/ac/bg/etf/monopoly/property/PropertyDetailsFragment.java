@@ -1,9 +1,7 @@
 package rs.ac.bg.etf.monopoly.property;
 
-import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.PorterDuff;
-import android.media.Image;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -25,9 +23,7 @@ import rs.ac.bg.etf.monopoly.GameModel;
 import rs.ac.bg.etf.monopoly.MainActivity;
 import rs.ac.bg.etf.monopoly.R;
 import rs.ac.bg.etf.monopoly.databinding.FragmentPropertyDetailsBinding;
-import rs.ac.bg.etf.monopoly.databinding.FragmentTableBinding;
 import rs.ac.bg.etf.monopoly.db.DBMonopoly;
-import rs.ac.bg.etf.monopoly.db.Property;
 import rs.ac.bg.etf.monopoly.db.Repository;
 
 
@@ -49,7 +45,7 @@ public class PropertyDetailsFragment extends Fragment {
         super.onCreate(savedInstanceState);
         activity= (MainActivity) requireActivity();
         DBMonopoly db=DBMonopoly.getInstance(activity);
-        repo=new Repository(activity,db.getDao());
+        repo=new Repository(activity,db.getDaoProperty(), db.getDaoPlayer());
         model= new ViewModelProvider(activity).get(GameModel.class);
     }
 

@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import java.util.List;
+import java.util.concurrent.Future;
 
 import rs.ac.bg.etf.monopoly.MainActivity;
 import rs.ac.bg.etf.monopoly.MyApplication;
@@ -15,12 +16,16 @@ public class Repository {
 
 
     private PropertyDAO property;
+    private PlayerDAO player;
     private MainActivity activity;
 
-    public Repository(MainActivity activity, PropertyDAO dao){
+    public Repository(MainActivity activity, PropertyDAO dao, PlayerDAO dao2){
         property=dao;
+        player=dao2;
         this.activity=activity;
     }
+
+
 
     public void insert(Property p){
         property.insert(p);
@@ -65,5 +70,27 @@ public class Repository {
 
     public LiveData<List<Property>> getTypeOfHolder(int h, int t){
         return property.getTypeOfHolder(h,t);
+    }
+
+    public int getNextGame(){
+        return player.getNextGame();
+    }
+
+    public void insertPlayer(List<Player> p){
+        ((MyApplication)activity.getApplication()).getExecutorService().execute(()->{
+            player.insert(p);
+        });
+    }
+
+    public LiveData<List<Player>> getPlayers(int game){
+        return player.getPlayers(game);
+    }
+
+    public Player getPlayer(int p, int game){
+        return player.getPosition(p,game);
+    }
+
+    public void updatePlayer(Player p){
+        player.update(p); //ne zove se u main niti
     }
 }

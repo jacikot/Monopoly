@@ -19,7 +19,6 @@ import rs.ac.bg.etf.monopoly.GameModel;
 import rs.ac.bg.etf.monopoly.MainActivity;
 import rs.ac.bg.etf.monopoly.R;
 import rs.ac.bg.etf.monopoly.databinding.FragmentOpenCardBinding;
-import rs.ac.bg.etf.monopoly.databinding.FragmentPropertyPayBinding;
 import rs.ac.bg.etf.monopoly.db.DBMonopoly;
 import rs.ac.bg.etf.monopoly.db.Repository;
 
@@ -42,7 +41,7 @@ public class OpenCardFragment extends Fragment {
         super.onCreate(savedInstanceState);
         activity= (MainActivity) requireActivity();
         DBMonopoly db=DBMonopoly.getInstance(activity);
-        repo=new Repository(activity,db.getDao());
+        repo=new Repository(activity,db.getDaoProperty(),db.getDaoPlayer());
         model= new ViewModelProvider(activity).get(GameModel.class);
     }
 
