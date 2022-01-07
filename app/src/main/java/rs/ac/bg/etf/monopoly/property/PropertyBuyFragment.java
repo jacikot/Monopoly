@@ -78,10 +78,8 @@ public class PropertyBuyFragment extends Fragment {
                 gameModel.update(player);
                 gameModel.setBought(true);
                 handler.post(()->{
-                   PropertyBuyFragmentDirections.Bought action=PropertyBuyFragmentDirections.bought();
-                   action.setIndex(args.getIndex());
-                   action.setUser(args.getUser());
-                   controller.navigate(action);
+                    RouterUtility.routeBuy(controller,p,player.getIndex());
+
                 });
             });
         });

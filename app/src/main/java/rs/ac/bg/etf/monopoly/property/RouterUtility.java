@@ -6,6 +6,19 @@ import rs.ac.bg.etf.monopoly.TableFragmentDirections;
 import rs.ac.bg.etf.monopoly.db.Property;
 
 public class RouterUtility {
+
+    public static void routeBuy(NavController controller, Property property, int user){
+        if(property.getType()==0){
+            PropertyBuyFragmentDirections.Bought action=PropertyBuyFragmentDirections.bought();
+            action.setIndex(property.getId());
+            action.setUser(user);
+            controller.navigate(action);
+            return;
+        }
+        if(property.getType()==1){
+
+        }
+    }
     
     public static void route(NavController controller, Property property, int user){
         int index=property.getId();
