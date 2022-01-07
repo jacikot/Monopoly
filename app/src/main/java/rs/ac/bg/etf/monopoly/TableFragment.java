@@ -14,6 +14,7 @@ import androidx.navigation.Navigation;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.os.SystemClock;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,10 +22,12 @@ import android.widget.ImageView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observer;
 
 import rs.ac.bg.etf.monopoly.databinding.FragmentTableBinding;
 import rs.ac.bg.etf.monopoly.db.DBMonopoly;
 import rs.ac.bg.etf.monopoly.db.Player;
+import rs.ac.bg.etf.monopoly.db.Property;
 import rs.ac.bg.etf.monopoly.db.Repository;
 import rs.ac.bg.etf.monopoly.property.PropertyModel;
 import rs.ac.bg.etf.monopoly.property.RouterUtility;
@@ -81,7 +84,7 @@ public class TableFragment extends Fragment {
 
             amb.getRoot().findViewById(id).setOnClickListener(e->{
                 propertyModel.getProperty(index).observe(getViewLifecycleOwner(),k->{
-                    RouterUtility.route(controller,k,model.getCurrentUser());
+                    RouterUtility.route(controller,k, model.getCurrentUser());
                 });
             });
         }
@@ -90,20 +93,33 @@ public class TableFragment extends Fragment {
 
         model.getPlayers().observe(getViewLifecycleOwner(),e->{
             TypedArray img=getResources().obtainTypedArray(R.array.ids);
-            ((ImageView)amb.getRoot().findViewById(img.getResourceId(model.getOldPossition(),0))).clearColorFilter();
+            ImageView k=((ImageView)amb.getRoot().findViewById(img.getResourceId(model.getOldPossition(),0)));
+            k.clearColorFilter();
             for(int j=0;j<model.getUserCount();j++){
                 ((ImageView)amb.getRoot().findViewById(img.getResourceId(e.get(j).getPosition(),0))).setColorFilter(Color.parseColor(colors[j]),
                         PorterDuff.Mode.MULTIPLY);
             }
+            //RouterUtility.route(controller,k,model.getCurrentUser());
             img.recycle();
         });
 
+        model.getDice1().observe(getViewLifecycleOwner(),e->{
+            amb.dices.setText("Kockica 1: "+e);
+        });
+
+        model.getDice2().observe(getViewLifecycleOwner(),e->{
+            amb.dices2.setText("Kockica 2: "+e);
+        });
         Handler mainHanfler=new Handler(Looper.getMainLooper());
 
         amb.topAppBar.getMenu().findItem(0).setOnMenuItemClickListener(e->{
             ((MyApplication)activity.getApplication()).getExecutorService().execute(()->{
-                model.rollTheDice();
-                mainHanfler.post(()->amb.dices.setText("Kockica1: "+model.getDice1()+" Kockica2"+model.getDice2()));
+                Player p=model.rollTheDice(TableFragment.this);
+                Property property=propertyModel.getPropertyBlocking(p.getPosition());
+                SystemClock.sleep(4000);
+                mainHanfler.post(()->{
+                    RouterUtility.route(controller ,property,(model.getCurrentUser()+model.getUserCount())% model.getUserCount());
+                });
             });
 
 

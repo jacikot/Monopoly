@@ -1,15 +1,21 @@
 package rs.ac.bg.etf.monopoly;
 
+import android.os.Handler;
+import android.os.Looper;
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.SavedStateHandle;
+import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 import rs.ac.bg.etf.monopoly.db.Player;
 import rs.ac.bg.etf.monopoly.db.Repository;
@@ -17,18 +23,29 @@ import rs.ac.bg.etf.monopoly.property.PropertyModel;
 
 public class GameModel extends ViewModel {
 
-    private int currentUser=0;
-    private int dice1=5;
-    private int dice2=6;
+    private static final String  KEY_USER="currentUser";
+    private static final String  KEY_DICE="dice";
+
+    private int currentUser;
+    private LiveData<Integer> dice1;
+    private LiveData<Integer> dice2;
     private int attempts=0;
     private int oldPossition=0;
     private int currentGame;
     private int playerCnt;
+    private SavedStateHandle ssh;
     private Repository repo;
     private ArrayList<MutableLiveData<Integer>> possitions=new ArrayList<>();
 
-    public GameModel(Repository repo){
-        this.repo=repo;
+    public GameModel(SavedStateHandle ssh){
+        this.ssh=ssh;
+
+        dice1= Transformations.map(ssh.getLiveData(KEY_DICE+1, 0), saved->{
+            return saved;
+        });
+        dice2= Transformations.map(ssh.getLiveData(KEY_DICE+2, 0), saved->{
+            return saved;
+        });
     }
 
     public int getNextGame(){
@@ -60,40 +77,50 @@ public class GameModel extends ViewModel {
     }
 
 
-    public void rollTheDice(){
-        dice1=(int)(Math.random()*6)+1;
-        dice2=(int)(Math.random()*6)+1;
-
-
+    public Player rollTheDice(LifecycleOwner o){
+        int dice1=((int)(Math.random()*6))+1;
+        int dice2=((int)(Math.random()*6))+1;
+        android.os.Handler mainHanfler=new Handler(Looper.getMainLooper());
+        mainHanfler.post(()->{
+            ssh.set(KEY_DICE+1,dice1);
+            ssh.set(KEY_DICE+2,dice2);
+        });
+        AtomicReference<Player> e=new AtomicReference<>();
         AtomicBoolean finish=new AtomicBoolean(false);
         while(!finish.get()){
-            Player e=repo.getPlayer(currentUser,currentGame);
-            if(e.getPrison()>0){
-                e.setPrison(e.getPrison()-1);
+            e.set(repo.getPlayer(currentUser,currentGame));
+            if(e.get().getPrison()>0){
+                e.get().setPrison(e.get().getPrison()-1);
                 currentUser=(currentUser+1)%playerCnt;
             }
             else{
-                oldPossition=e.getPosition();
-                e.setPosition((oldPossition+dice1+dice2)%40);
+                oldPossition=e.get().getPosition();
+                e.get().setPosition((oldPossition+dice1+dice2)%40);
+                if(oldPossition>(oldPossition+dice1+dice2)%40){
+                    e.get().setMoney(e.get().getMoney()+200);
+                }
                 attempts++;
                 if(dice1!=dice2){
                     currentUser=(currentUser+1)%playerCnt;
                     attempts=0;
                 }
                 else if(attempts>2){
-                    e.setPrison(2);
-                    e.setPosition(10); //zatvor
+                    e.get().setPrison(2);
+                    e.get().setPosition(10); //zatvor
                     currentUser=(currentUser+1)%playerCnt;
                     attempts=0;
                 }
                 finish.set(true);
+
             }
-            repo.updatePlayer(e);
-
-
+            repo.updatePlayer(e.get());
         }
+        return e.get();
 
+    }
 
+    public Player getPlayer(int ind){
+        return repo.getPlayer(ind,currentGame);
     }
 
     public LiveData<List<Player>> getPlayers(){
@@ -105,39 +132,33 @@ public class GameModel extends ViewModel {
     }
 
 
-    public int getDice1() {
+    public LiveData<Integer> getDice1() {
         return dice1;
     }
 
-    public void setDice1(int dice1) {
-        this.dice1 = dice1;
-    }
 
-    public int getDice2() {
+
+    public LiveData<Integer> getDice2() {
         return dice2;
     }
 
-    public void setDice2(int dice2) {
-        this.dice2 = dice2;
-    }
+
 
     public int getCurrentUser() {
         return currentUser;
     }
 
     public void setCurrentUser(int currentUser) {
-        this.currentUser = currentUser;
+        this.currentUser=currentUser;
     }
 
+    public void setRepo(Repository repo) {
+        this.repo = repo;
+    }
 
     public static GameModel getModel(Repository repo, MainActivity activity){
-        ViewModelProvider.Factory factory=new ViewModelProvider.Factory() {
-            @NonNull
-            @Override
-            public <T extends ViewModel> T create(@NonNull Class<T> aClass) {
-                return (T)new GameModel(repo);
-            }
-        };
-        return new ViewModelProvider(activity, factory).get(GameModel.class);
+        GameModel model=new ViewModelProvider(activity).get(GameModel.class);
+        model.setRepo(repo);
+        return model;
     }
 }

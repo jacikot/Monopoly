@@ -25,9 +25,19 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/topAppBar"
+        app:layout_constraintBottom_toTopOf="@id/dices2"
+        android:textColor="@color/black"
+        tools:text="Kockica1: 2"
+        android:gravity="center"
+        />
+    <TextView
+        android:id="@+id/dices2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/dices"
         app:layout_constraintBottom_toTopOf="@id/map"
         android:textColor="@color/black"
-        tools:text="Kockica1: 2 Kockica2: 3"
+        tools:text="Kockica2: 3"
         android:gravity="center"
         />
 

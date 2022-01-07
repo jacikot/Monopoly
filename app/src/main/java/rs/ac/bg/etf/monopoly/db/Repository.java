@@ -34,6 +34,9 @@ public class Repository {
     public LiveData<Property> getProperty(int id){
         return property.getProperty(id);
     }
+    public Property getPropertyBlocking(int id){
+        return property.getPropertyBlocking(id);
+    }
 
 
     public void initProperties(){

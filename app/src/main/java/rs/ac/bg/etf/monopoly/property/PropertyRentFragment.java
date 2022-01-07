@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -152,10 +153,16 @@ public class PropertyRentFragment extends Fragment {
     private void calculateEPS(Property e){
         repo.getTypeOfHolder(e.getHolder(), e.getType()).observe(getViewLifecycleOwner(),p->{
             if(p.size()==1){
-                amb.plati.setText("Platite rezije " + "("+4*(model.getDice1()+ model.getDice2())+"M)");
+                MediatorLiveData<Integer> m=new MediatorLiveData<>();
+                model.getDice2().observe(getViewLifecycleOwner(),k->{
+                    amb.plati.setText("Platite rezije " + "("+4*(model.getDice1().getValue()+ k)+"M)");
+                });
+
             }
             else {
-                amb.plati.setText("Platite rezije " + "("+10*(model.getDice1()+ model.getDice2())+"M)");
+                model.getDice2().observe(getViewLifecycleOwner(),k->{
+                    amb.plati.setText("Platite rezije " + "("+4*(model.getDice1().getValue()+ k)+"M)");
+                });
             }
         });
     }

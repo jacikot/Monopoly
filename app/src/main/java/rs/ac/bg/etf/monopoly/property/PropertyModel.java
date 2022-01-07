@@ -29,6 +29,9 @@ public class PropertyModel extends ViewModel {
         return repo.getProperty(id);
     }
 
+    public Property getPropertyBlocking(int id){
+        return repo.getPropertyBlocking(id);
+    }
     public void initDB(){
         repo.initProperties();
     }

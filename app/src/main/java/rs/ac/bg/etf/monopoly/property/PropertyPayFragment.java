@@ -59,10 +59,14 @@ public class PropertyPayFragment extends Fragment {
             if(e.getType()==2){
                 repo.getTypeOfHolder(e.getHolder(), e.getType()).observe(getViewLifecycleOwner(),p->{
                     if(p.size()==1){
-                        amb.prodaj.setText("Platite rezije " + "("+4*(model.getDice1()+ model.getDice2())+"M)");
+                        model.getDice2().observe(getViewLifecycleOwner(),k->{
+                            amb.prodaj.setText("Platite rezije " + "("+4*(model.getDice1().getValue()+ k)+"M)");
+                        });
                     }
                     if(p.size()==2){
-                        amb.prodaj.setText("Platite rezije " + "("+10*(model.getDice1()+ model.getDice2())+"M)");
+                        model.getDice2().observe(getViewLifecycleOwner(),k->{
+                            amb.prodaj.setText("Platite rezije " + "("+4*(model.getDice1().getValue()+ k)+"M)");
+                        });
                     }
                 });
                 if(e.getId()==12){
