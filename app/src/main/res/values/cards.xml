@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="text">
+        <item>Izadji besplatno iz zatvora!</item>
+        <item>Ides direktno u zatvor!</item>
+        <item>Pomeren si 3 polja unazad!</item>
+        <item>Pomeren si 3 polja unapred!</item>
+        <item>Ides do prve zeleznicke stanice!</item>
+        <item>Ides do prve komunalne!</item>
+        <item>Kazna za lose parkiranje (-50M)!</item>
+        <item>Bolnicki troskovi (-100M)!</item>
+        <item>Uplaceno je zivotno osiguranje (+200M)!</item>
+        <item>Godisnje renoviranje - Sa racuna Vam se skida 40M po kuci i 200M po hotelu!</item>
+        <item>Greska u banci u Vasu - Isplaceno Vam je 20M po kuci i 100M po hotelu!</item>
+        <item>Rodjendan Vam je! Od svakog igraca dobijate 50M!</item>
+        <item>Postali ste predsednik uprave! Platite svima 50M!</item>
+    </string-array>
+
+    <array name="type_card">
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>
+        <item>1</item>
+        <item>1</item>
+        <item>1</item>
+        <item>1</item>
+        <item>1</item>
+        <item>1</item>
+        <item>1</item>
+    </array>
+
+    <array name="movement">
+        <item>-1</item>
+        <item>-1</item>
+        <item>-3</item>
+        <item>3</item>
+        <item>1</item>
+        <item>2</item>
+        <item>-1</item>
+        <item>-1</item>
+        <item>-1</item>
+        <item>-1</item>
+        <item>-1</item>
+        <item>-1</item>
+        <item>-1</item>
+    </array>
+
+    <array name="prison">
+        <item>1</item>
+        <item>2</item>
+        <item>-1</item>
+        <item>-1</item>
+        <item>-1</item>
+        <item>-1</item>
+        <item>-1</item>
+        <item>-1</item>
+        <item>-1</item>
+        <item>-1</item>
+        <item>-1</item>
+        <item>-1</item>
+        <item>-1</item>
+    </array>
+
+    <array name="money">
+        <item>-1</item>
+        <item>-1</item>
+        <item>-1</item>
+        <item>-1</item>
+        <item>-1</item>
+        <item>-1</item>
+        <item>-50</item>
+        <item>-100</item>
+        <item>200</item>
+        <item>40</item>
+        <item>20</item>
+        <item>50</item>
+        <item>50</item>
+    </array>
+
+    <array name="to_whom">
+        <item>-1</item>
+        <item>-1</item>
+        <item>-1</item>
+        <item>-1</item>
+        <item>-1</item>
+        <item>-1</item>
+        <item>1</item>
+        <item>1</item>
+        <item>1</item>
+        <item>2</item>
+        <item>2</item>
+        <item>3</item>
+        <item>3</item>
+    </array>
+
+
+</resources>

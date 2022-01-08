@@ -56,7 +56,7 @@ public class TableFragment extends Fragment {
         super.onCreate(savedInstanceState);
         activity= (MainActivity) requireActivity();
         DBMonopoly db=DBMonopoly.getInstance(activity);
-        Repository repo=new Repository(activity,db.getDaoProperty(),db.getDaoPlayer());
+        Repository repo=new Repository(activity,db.getDaoProperty(),db.getDaoPlayer(), db.getDaoCard());
         propertyModel=PropertyModel.getModel(repo, activity);
         model=GameModel.getModel(repo,activity);
         ((MyApplication)activity.getApplication()).getExecutorService().execute(()->{

@@ -5,6 +5,8 @@ import android.content.res.TypedArray;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Future;
 
@@ -17,11 +19,13 @@ public class Repository {
 
     private PropertyDAO property;
     private PlayerDAO player;
+    private CardDAO card;
     private MainActivity activity;
 
-    public Repository(MainActivity activity, PropertyDAO dao, PlayerDAO dao2){
+    public Repository(MainActivity activity, PropertyDAO dao, PlayerDAO dao2, CardDAO cards){
         property=dao;
         player=dao2;
+        card=cards;
         this.activity=activity;
     }
 
@@ -44,6 +48,25 @@ public class Repository {
         });
     }
 
+    public void insertCards(){
+        String[] text=activity.getResources().getStringArray(R.array.text);
+        TypedArray type=activity.getResources().obtainTypedArray(R.array.type_card);
+        TypedArray movement=activity.getResources().obtainTypedArray(R.array.movement);
+        TypedArray prison=activity.getResources().obtainTypedArray(R.array.prison);
+        TypedArray money=activity.getResources().obtainTypedArray(R.array.money);
+        TypedArray payementType=activity.getResources().obtainTypedArray(R.array.to_whom);
+
+        ArrayList<Card> cards=new ArrayList<>();
+        for(int i=0;i<text.length;i++){
+            Card c=new Card(i,type.getInt(i,0),movement.getInt(i,0),money.getInt(i,0),
+                   payementType.getInt(i,0),prison.getInt(i,0),text[i]);
+            cards.add(c);
+        }
+
+        ((MyApplication)activity.getApplication()).getExecutorService().execute(()->{
+            card.insert(cards);
+        });
+    }
 
 
 
