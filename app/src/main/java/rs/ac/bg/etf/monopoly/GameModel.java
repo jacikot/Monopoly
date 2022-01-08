@@ -36,6 +36,15 @@ public class GameModel extends ViewModel {
     private boolean ableToBuy;
     private boolean bought;
     private boolean paid=true;
+    private int moneyFromTaxes;
+
+    public int getMoneyFromTaxes() {
+        return moneyFromTaxes;
+    }
+
+    public void setMoneyFromTaxes(int moneyFromTaxes) {
+        this.moneyFromTaxes = moneyFromTaxes;
+    }
 
     public boolean isPaid() {
         return paid;
@@ -117,7 +126,7 @@ public class GameModel extends ViewModel {
         bought=false;
 //        int dice1=((int)(Math.random()*6))+1;
 //        int dice2=((int)(Math.random()*6))+1;
-        int dice1=5;
+        int dice1=1;
         int dice2=3;
         android.os.Handler mainHanfler=new Handler(Looper.getMainLooper());
         mainHanfler.post(()->{

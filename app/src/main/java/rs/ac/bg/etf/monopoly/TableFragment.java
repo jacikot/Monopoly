@@ -1,5 +1,6 @@
 package rs.ac.bg.etf.monopoly;
 
+import android.content.DialogInterface;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -20,6 +21,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,7 +63,7 @@ public class TableFragment extends Fragment {
             int e=model.getNextGame();
             List<Player> list=new ArrayList<>();
             list.add(new Player(0,e,"Jana",1500,0,0));
-//            list.add(new Player(1,e,"Lana",1500,0,0));
+            list.add(new Player(1,e,"Lana",1500,0,0));
 //            list.add(new Player(2,e,"Nana",1500,0,0));
 //            list.add(new Player(3,e,"Gana",1500,0,0));
             model.startGame(list);
@@ -116,7 +119,7 @@ public class TableFragment extends Fragment {
             amb.dices2.setText("Kockica 2: "+e);
         });
 
-        amb.topAppBar.getMenu().findItem(0).setOnMenuItemClickListener(e->{
+        amb.topAppBar.getMenu().getItem(0).setOnMenuItemClickListener(e->{
             if(model.isPaid()){
                 ((MyApplication)activity.getApplication()).getExecutorService().execute(()->{
                     Player p=model.rollTheDice(TableFragment.this);
@@ -129,12 +132,25 @@ public class TableFragment extends Fragment {
                 });
             }
             else Toast.makeText(activity,"Niste platili dazbine!",Toast.LENGTH_SHORT).show();
-
-
-
            return true;
         });
 
+
+
+        amb.topAppBar.getMenu().getItem(1).setOnMenuItemClickListener(e-> {
+            ((MyApplication)activity.getApplication()).getExecutorService().execute(()->{
+                Player current= model.getPlayer(model.getLastPlayer());
+                String msg="Na racunu imate: "+current.getMoney()+
+                        "\nNovac sakupljen od poreza: "+model.getMoneyFromTaxes();
+                mainHanfler.post(()->new MaterialAlertDialogBuilder(activity)
+                        .setTitle("Novac")
+                        .setMessage(msg)
+                        .setNeutralButton((CharSequence) "Cancel", (dialog, which) -> {
+                            dialog.cancel();
+                        }).show());
+            });
+            return true;
+        });
         images.recycle();
         return amb.getRoot();
     }

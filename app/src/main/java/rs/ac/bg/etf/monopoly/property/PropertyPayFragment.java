@@ -102,15 +102,22 @@ public class PropertyPayFragment extends Fragment {
             ((MyApplication)activity.getApplication()).getExecutorService().execute(()->{
                 Property p=propertyModel.getPropertyBlocking(args.getIndex());
                 Player player=model.getPlayer(args.getUser());
+                Player owner=null;
                 int price=0;
                 if(p.getType()==5)price=p.getRent_l0();
                 else {
-                    price=((propertyModel.getTypeOfHolderBlocking(player.getIndex(),p.getType()).size()==1)?4:10)
+                    owner= model.getPlayer(p.getHolder());
+                    price=((propertyModel.getTypeOfHolderBlocking(owner.getIndex(),p.getType()).size()==1)?4:10)
                             *(model.getDice1().getValue()+model.getDice2().getValue());
 
                 }
 
                 if(price<=player.getMoney()){
+                    if(p.getType()==5) model.setMoneyFromTaxes(model.getMoneyFromTaxes()+price);
+                    else{
+                        owner.setMoney(owner.getMoney()+price);
+                        model.update(owner);
+                    }
                     player.setMoney(player.getMoney()-price);
                     model.update(player);
                     h.post(()->{
