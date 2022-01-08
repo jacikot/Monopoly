@@ -9,22 +9,25 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.MediatorLiveData;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import rs.ac.bg.etf.monopoly.GameModel;
 import rs.ac.bg.etf.monopoly.MainActivity;
+import rs.ac.bg.etf.monopoly.MyApplication;
 import rs.ac.bg.etf.monopoly.R;
 import rs.ac.bg.etf.monopoly.databinding.FragmentPropertyRentBinding;
 import rs.ac.bg.etf.monopoly.db.DBMonopoly;
+import rs.ac.bg.etf.monopoly.db.Player;
 import rs.ac.bg.etf.monopoly.db.Property;
 import rs.ac.bg.etf.monopoly.db.Repository;
 
@@ -33,6 +36,7 @@ public class PropertyRentFragment extends Fragment {
 
     private FragmentPropertyRentBinding amb;
     private GameModel model;
+    private PropertyModel propertyModel;
     private MainActivity activity;
     private NavController controller;
     private Repository repo;
@@ -48,7 +52,8 @@ public class PropertyRentFragment extends Fragment {
         activity= (MainActivity) requireActivity();
         DBMonopoly db=DBMonopoly.getInstance(activity);
         repo=new Repository(activity,db.getDaoProperty(), db.getDaoPlayer());
-        model= new ViewModelProvider(activity).get(GameModel.class);
+        model= GameModel.getModel(repo,activity);
+        propertyModel=PropertyModel.getModel(repo,activity);
     }
 
     @Override
@@ -57,7 +62,7 @@ public class PropertyRentFragment extends Fragment {
         // Inflate the layout for this fragment
         amb=FragmentPropertyRentBinding.inflate(inflater,container,false);
         TypedArray images=getResources().obtainTypedArray(R.array.images_details);
-        PropertyDetailsFragmentArgs args=PropertyDetailsFragmentArgs.fromBundle(getArguments());
+        PropertyRentFragmentArgs args=PropertyRentFragmentArgs.fromBundle(getArguments());
         amb.posed.setImageDrawable(images.getDrawable(args.getIndex()));
         images.recycle();
 
@@ -94,10 +99,43 @@ public class PropertyRentFragment extends Fragment {
 
         });
 
+        Handler h=new Handler(Looper.getMainLooper());
 
+        if(!model.isAbleToBuy()||model.isBought()){
+            amb.plati.setEnabled(false);
+        }
+        else model.setPaid(false);
 
+        amb.plati.setOnClickListener(e->{
+            ((MyApplication)activity.getApplication()).getExecutorService().execute(()->{
+                Property p=propertyModel.getPropertyBlocking(args.getIndex());
+                Player player=model.getPlayer(args.getUser());
+                Player owner=model.getPlayer(p.getHolder());
+                int price=0;
+                if(p.getType()==0) price=calculate(p);
+                else price=calculateStation(p);
+                if(price<=player.getMoney()){
+                    owner.setMoney(owner.getMoney()+price);
+                    model.update(owner);
+                    player.setMoney(player.getMoney()-price);
+                    model.update(player);
+                    h.post(()->{
+                        controller.navigateUp();
+                    });
+                    model.setBought(true);
+                    model.setPaid(true);
+                }
+                else {
+                    //ovo treba da bude kompleksniji uslov
+                    //provera da li je bankrot
+                    h.post(()-> Toast.makeText(activity,"Nemate dovoljno novca!",Toast.LENGTH_SHORT).show());
+                }
+            });
+        });
         return amb.getRoot();
     }
+
+
 
     private void initText(Property e){
         if(e.getType()==0){
@@ -109,25 +147,14 @@ public class PropertyRentFragment extends Fragment {
             amb.hotel.setText("Hotel "+"("+e.getRent_l5()+"M)");
             amb.plati.setText(amb.plati.getText() + "("+calculate(e)+"M)");
         }
-        else if(e.getType()==1){
+        else{
             amb.kuca1.setText("Jedna stanica "+"("+e.getRent_l0()+"M)");
             amb.kuca2.setText("Dve stanice"+"("+e.getRent_l1()+"M)");
             amb.kuca3.setText("Tri stanice"+"("+e.getRent_l2()+"M)");
             amb.kuca4.setText("Cetiri stanice"+"("+e.getRent_l3()+"M)");
-            calculateStation(e);
+            printStationPrices(e);
             amb.sadrzaj.removeView(amb.hotel);
             amb.sadrzaj.removeView(amb.bez);
-        }
-        else{
-            if(e.getId()==12)amb.naslov.setText("Niste platili struju ovaj mesec!");
-            else amb.naslov.setText("Niste platili vodu ovaj mesec!");
-            amb.sadrzaj.removeView(amb.hotel);
-            amb.sadrzaj.removeView(amb.bez);
-            amb.sadrzaj.removeView(amb.kuca1);
-            amb.sadrzaj.removeView(amb.kuca2);
-            amb.sadrzaj.removeView(amb.kuca3);
-            amb.sadrzaj.removeView(amb.kuca4);
-            calculateEPS(e);
         }
     }
 
@@ -141,7 +168,7 @@ public class PropertyRentFragment extends Fragment {
         return -1;
     }
 
-    private void calculateStation(Property e){
+    private void printStationPrices(Property e){
         repo.getTypeOfHolder(e.getHolder(),e.getType()).observe(getViewLifecycleOwner(),p->{
             if(p.size()==1) amb.plati.setText(amb.plati.getText() + "("+e.getRent_l0()+"M)");
             if(p.size()==2) amb.plati.setText(amb.plati.getText() + "("+e.getRent_l1()+"M)");
@@ -150,21 +177,13 @@ public class PropertyRentFragment extends Fragment {
         });
     }
 
-    private void calculateEPS(Property e){
-        repo.getTypeOfHolder(e.getHolder(), e.getType()).observe(getViewLifecycleOwner(),p->{
-            if(p.size()==1){
-                MediatorLiveData<Integer> m=new MediatorLiveData<>();
-                model.getDice2().observe(getViewLifecycleOwner(),k->{
-                    amb.plati.setText("Platite rezije " + "("+4*(model.getDice1().getValue()+ k)+"M)");
-                });
-
-            }
-            else {
-                model.getDice2().observe(getViewLifecycleOwner(),k->{
-                    amb.plati.setText("Platite rezije " + "("+4*(model.getDice1().getValue()+ k)+"M)");
-                });
-            }
-        });
+    private int calculateStation(Property e){
+        int p=repo.getTypeOfHolderBlocking(e.getHolder(),e.getType()).size();
+        if(p==1) return e.getRent_l0();
+        if(p==2) return e.getRent_l1();
+        if(p==3) return e.getRent_l2();
+        if(p==4) return e.getRent_l3();
+        return -1;
     }
 
     @Override

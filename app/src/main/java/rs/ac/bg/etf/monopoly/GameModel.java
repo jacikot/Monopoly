@@ -127,7 +127,7 @@ public class GameModel extends ViewModel {
 //        int dice1=((int)(Math.random()*6))+1;
 //        int dice2=((int)(Math.random()*6))+1;
         int dice1=1;
-        int dice2=3;
+        int dice2=2;
         android.os.Handler mainHanfler=new Handler(Looper.getMainLooper());
         mainHanfler.post(()->{
             ssh.set(KEY_DICE+1,dice1);

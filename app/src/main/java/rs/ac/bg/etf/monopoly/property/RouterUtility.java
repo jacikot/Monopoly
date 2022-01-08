@@ -65,6 +65,7 @@ public class RouterUtility {
         }
         if(property.getHolder()!=-1 && property.getHolder()!=user){
             TableFragmentDirections.Pay action=TableFragmentDirections.pay(index);
+            action.setUser(user);
             controller.navigate(action);
             return;
         }

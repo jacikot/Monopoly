@@ -98,6 +98,10 @@
         <argument
             android:name="index"
             app:argType="integer" />
+        <argument
+            android:name="user"
+            app:argType="integer"
+            android:defaultValue="0" />
     </fragment>
     <fragment
         android:id="@+id/propertyPayFragment"
