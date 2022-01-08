@@ -68,6 +68,10 @@ public class Repository {
         });
     }
 
+    public List<Card> getCardsForType(int t){
+        return card.getCardsForType(t);
+    }
+
 
 
     public void initProperties(boolean insert){

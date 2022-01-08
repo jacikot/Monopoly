@@ -10,16 +10,25 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
+import java.util.List;
 
 import rs.ac.bg.etf.monopoly.GameModel;
 import rs.ac.bg.etf.monopoly.MainActivity;
+import rs.ac.bg.etf.monopoly.MyApplication;
 import rs.ac.bg.etf.monopoly.R;
 import rs.ac.bg.etf.monopoly.databinding.FragmentCornerBinding;
+import rs.ac.bg.etf.monopoly.db.Card;
 import rs.ac.bg.etf.monopoly.db.DBMonopoly;
+import rs.ac.bg.etf.monopoly.db.Player;
+import rs.ac.bg.etf.monopoly.db.Property;
 import rs.ac.bg.etf.monopoly.db.Repository;
 
 public class CornerFragment extends Fragment {
@@ -50,7 +59,7 @@ public class CornerFragment extends Fragment {
         // Inflate the layout for this fragment
         amb= FragmentCornerBinding.inflate(inflater,container,false);
         TypedArray images=getResources().obtainTypedArray(R.array.images_details);
-        PropertyDetailsFragmentArgs args=PropertyDetailsFragmentArgs.fromBundle(getArguments());
+        CornerFragmentArgs args=CornerFragmentArgs.fromBundle(getArguments());
         amb.posed.setImageDrawable(images.getDrawable(args.getIndex()));
         images.recycle();
         switch(args.getIndex()){
@@ -62,7 +71,40 @@ public class CornerFragment extends Fragment {
         amb.layout.setGravity(Gravity.CENTER);
 
 
+        switch(args.getIndex()){
+            case 0: break;
+            case 10: break;
+            case 20: takeFromBoard(args.getUser()); break;
+            case 30: gotoPrison(args.getUser());break;
+        }
+
         return amb.getRoot();
+    }
+
+    Handler h=new Handler(Looper.getMainLooper());
+
+    private void gotoPrison(int user) {
+        ((MyApplication)activity.getApplication()).getExecutorService().execute(()->{
+            Player p= model.getPlayer(user);
+            if(p.getPrison()<0){
+                p.setPrison(p.getPrison()+1);
+                h.post(()->Toast.makeText(activity,"Ne morate u zatvor imae besplatnu kartu!",Toast.LENGTH_SHORT));
+            }
+            else{
+                p.setPrison(2);
+                p.setPosition(10);
+            }
+            model.update(p);
+        });
+    }
+
+    private void takeFromBoard(int user) {
+        ((MyApplication)activity.getApplication()).getExecutorService().execute(()->{
+            Player p= model.getPlayer(user);
+            p.setMoney(p.getMoney()+model.getMoneyFromTaxes());
+            model.update(p);
+            model.setMoneyFromTaxes(0);
+        });
     }
 
     @Override

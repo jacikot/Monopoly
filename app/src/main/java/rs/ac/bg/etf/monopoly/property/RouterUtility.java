@@ -28,7 +28,9 @@ public class RouterUtility {
         int index=property.getId();
         if(index%10==0){
             TableFragmentDirections.Corner action=TableFragmentDirections.corner(index);
+            action.setUser(user);
             controller.navigate(action);
+
             return;
         }
 

@@ -126,7 +126,7 @@ public class GameModel extends ViewModel {
         bought=false;
 //        int dice1=((int)(Math.random()*6))+1;
 //        int dice2=((int)(Math.random()*6))+1;
-        int dice1=1;
+        int dice1=0;
         int dice2=2;
         android.os.Handler mainHanfler=new Handler(Looper.getMainLooper());
         mainHanfler.post(()->{
