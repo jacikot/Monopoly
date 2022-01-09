@@ -143,4 +143,8 @@
             app:argType="integer"
             android:defaultValue="0" />
     </fragment>
+    <action
+        android:id="@+id/new_game"
+        app:destination="@id/homeFragment"
+        app:popUpTo="@id/nav_graph" />
 </navigation>

@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
+import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
 
 import android.os.Handler;
@@ -223,7 +224,8 @@ public class TableFragment extends Fragment {
                             .setMessage("Pobednik je: "+winner)
                             .setNeutralButton((CharSequence) "Cancel", (dialog, which) -> {
                                 dialog.cancel();
-                                controller.navigateUp();
+                                NavDirections d=TableFragmentDirections.newGame();
+                                controller.navigate(d);
                             }).show());
                 }
                 StringBuilder time = new StringBuilder();
