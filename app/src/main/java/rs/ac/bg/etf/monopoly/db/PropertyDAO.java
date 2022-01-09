@@ -31,4 +31,7 @@ public interface PropertyDAO {
 
     @Query("SELECT COUNT(*) FROM Property WHERE `group`=:color")
     public int getSameColorCnt(int color);
+
+    @Query("SELECT * FROM Property WHERE type=:type")
+    public List<Property> getOfType(int type);
 }

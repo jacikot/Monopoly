@@ -72,6 +72,14 @@ public class Repository {
         return card.getCardsForType(t);
     }
 
+    public List<Property> getOfType(int type){
+        return property.getOfType(type);
+    }
+
+    public List<Player> getAllPlayers(int game){
+        return player.getAllPlayers(game);
+    }
+
 
 
     public void initProperties(boolean insert){

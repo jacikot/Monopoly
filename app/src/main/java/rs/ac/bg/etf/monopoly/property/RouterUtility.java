@@ -36,6 +36,7 @@ public class RouterUtility {
 
         if(property.getType()==3||property.getType()==4){
             TableFragmentDirections.Open action=TableFragmentDirections.open(index);
+            action.setUser(user);
             controller.navigate(action);
             return;
         }
@@ -67,6 +68,56 @@ public class RouterUtility {
         }
         if(property.getHolder()!=-1 && property.getHolder()!=user){
             TableFragmentDirections.Pay action=TableFragmentDirections.pay(index);
+            action.setUser(user);
+            controller.navigate(action);
+            return;
+        }
+    }
+
+    public static void routeFromCards(NavController controller, Property property, int user){
+        int index=property.getId();
+        if(index%10==0){
+            OpenCardFragmentDirections.Corner action=OpenCardFragmentDirections.corner(index);
+            action.setUser(user);
+            controller.navigate(action);
+
+            return;
+        }
+
+        if(property.getType()==3||property.getType()==4){
+            OpenCardFragmentDirections.Open action=OpenCardFragmentDirections.open(index);
+            action.setUser(user);
+            controller.navigate(action);
+            return;
+        }
+        if(property.getHolder()!=-1&&property.getHolder()!=user&&property.getType()==2 || property.getType()==5){
+            OpenCardFragmentDirections.Taxes action=OpenCardFragmentDirections.taxes(index);
+            action.setUser(user);
+            controller.navigate(action);
+            return;
+        }
+        if(property.getHolder()== user && property.getType()==0){
+            OpenCardFragmentDirections.Details action=OpenCardFragmentDirections.details();
+            action.setIndex(index);
+            action.setUser(user);
+            controller.navigate(action);
+            return;
+        }
+        if(property.getHolder()== user && (property.getType()==1 || property.getType()==2)){
+            OpenCardFragmentDirections.ToStation action=OpenCardFragmentDirections.toStation(index);
+            action.setUser(user);
+            controller.navigate(action);
+            return;
+        }
+        if(property.getHolder()==-1){
+            OpenCardFragmentDirections.Buy action=OpenCardFragmentDirections.buy();
+            action.setIndex(index);
+            action.setUser(user);
+            controller.navigate(action);
+            return;
+        }
+        if(property.getHolder()!=-1 && property.getHolder()!=user){
+            OpenCardFragmentDirections.Pay action=OpenCardFragmentDirections.pay(index);
             action.setUser(user);
             controller.navigate(action);
             return;

@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
+import rs.ac.bg.etf.monopoly.db.Card;
 import rs.ac.bg.etf.monopoly.db.Player;
 import rs.ac.bg.etf.monopoly.db.Repository;
 import rs.ac.bg.etf.monopoly.property.PropertyModel;
@@ -30,6 +31,7 @@ public class GameModel extends ViewModel {
     private int lastPlayed=0;
     private LiveData<Integer> dice1;
     private LiveData<Integer> dice2;
+    private MutableLiveData<Card> cardOpen=new MutableLiveData<>(null);
     private int attempts=0;
     private int oldPossition=0;
     private int currentGame;
@@ -37,6 +39,18 @@ public class GameModel extends ViewModel {
     private boolean bought;
     private boolean paid=true;
     private int moneyFromTaxes;
+
+    public LiveData<Card> getCardOpen() {
+        return cardOpen;
+    }
+
+    public void setCardOpen(Card cardOpen) {
+        this.cardOpen.postValue(cardOpen);
+    }
+
+    public List<Player> getAllPlayers(){
+        return repo.getAllPlayers(currentGame);
+    }
 
     public int getMoneyFromTaxes() {
         return moneyFromTaxes;
@@ -124,6 +138,7 @@ public class GameModel extends ViewModel {
 
     public Player rollTheDice(LifecycleOwner o){
         bought=false;
+        cardOpen.postValue(null);
 //        int dice1=((int)(Math.random()*6))+1;
 //        int dice2=((int)(Math.random()*6))+1;
         int dice1=0;
@@ -154,8 +169,13 @@ public class GameModel extends ViewModel {
                     attempts=0;
                 }
                 else if(attempts>2){
-                    e.get().setPrison(2);
-                    e.get().setPosition(10); //zatvor
+                    if(e.get().getPrison()<0){
+                        e.get().setPosition(e.get().getPosition()+1);
+                    }
+                    else{
+                        e.get().setPrison(2);
+                        e.get().setPosition(10); //zatvor
+                    }
                     currentUser=(currentUser+1)%playerCnt;
                     attempts=0;
                 }

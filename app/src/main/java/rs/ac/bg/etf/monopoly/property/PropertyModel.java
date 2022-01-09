@@ -57,6 +57,10 @@ public class PropertyModel extends ViewModel {
         }).count()==repo.getCountSameColor(color);
     }
 
+    public List<Property> getOfType(int type){
+        return repo.getOfType(type);
+    }
+
     public static PropertyModel getModel(Repository repo, MainActivity activity){
         ViewModelProvider.Factory factory=new ViewModelProvider.Factory() {
             @NonNull

@@ -16,8 +16,10 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import rs.ac.bg.etf.monopoly.CardModel;
 import rs.ac.bg.etf.monopoly.GameModel;
@@ -27,6 +29,7 @@ import rs.ac.bg.etf.monopoly.R;
 import rs.ac.bg.etf.monopoly.databinding.FragmentOpenCardBinding;
 import rs.ac.bg.etf.monopoly.db.Card;
 import rs.ac.bg.etf.monopoly.db.DBMonopoly;
+import rs.ac.bg.etf.monopoly.db.Player;
 import rs.ac.bg.etf.monopoly.db.Property;
 import rs.ac.bg.etf.monopoly.db.Repository;
 
@@ -58,6 +61,8 @@ public class OpenCardFragment extends Fragment {
         cardModel=CardModel.getModel(repo,activity);
     }
 
+    Handler h=new Handler(Looper.getMainLooper());
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -68,26 +73,134 @@ public class OpenCardFragment extends Fragment {
         amb.posed.setImageDrawable(images.getDrawable(args.getIndex()));
         images.recycle();
 
-        Handler h=new Handler(Looper.getMainLooper());
-
         if(model.isBought()||!model.isAbleToBuy()){
             amb.otvori.setEnabled(false);
         }
 
-        amb.otvori.setOnClickListener(e->{
 
+        model.getCardOpen().observe(getViewLifecycleOwner(),e->{
+            if(e==null){
+                amb.otvori.setVisibility(View.VISIBLE);
+                model.setPaid(false);
+            }
+            else{
+                amb.otvori.setVisibility(View.INVISIBLE);
+                amb.transakcija.setVisibility(View.VISIBLE);
+            }
+        });
+
+        amb.otvori.setOnClickListener(e->{
             ((MyApplication)activity.getApplication()).getExecutorService().execute(()->{
                 Property p=propertyModel.getPropertyBlocking(args.getIndex());
                 List<Card> cards=cardModel.getCardsType(p.getType()-3);
                 int random=(int)(Math.random()*cards.size());
-                h.post(()->amb.poruka.setText(cards.get(random).getMessage()));
+                h.post(()->{
+                    amb.poruka.setText(cards.get(random).getMessage());
+                    amb.transakcija.setVisibility(View.VISIBLE);
+                    amb.otvori.setVisibility(View.INVISIBLE);
+                });
+                model.setCardOpen(cards.get(random));
             });
+        });
+
+        amb.transakcija.setOnClickListener(e->{
+            model.getCardOpen().observe(getViewLifecycleOwner(),c->{
+                ((MyApplication)activity.getApplication()).getExecutorService().execute(()->execute(c, args.getUser()));
+            });
+
         });
 
         amb.layout.setGravity(Gravity.CENTER);
 
 
         return amb.getRoot();
+    }
+
+    private void execute(Card card, int user) {
+        if(card.getPrison()!=-1){
+            model.setPaid(true);
+            prisonExecute(card,user);
+        }
+        else if(card.getMovement()!=-1){
+            model.setPaid(true);
+            movementExecute(card,user);
+        }
+        else {
+            paymentExecute(card,user);
+        }
+    }
+
+    private void paymentExecute(Card card, int user) {
+        Player p=model.getPlayer(user);
+        int toPay=0;
+        switch (card.getPaymentType()){
+            case 1:
+                toPay=card.getMoney();
+                break;
+            case 2:
+                List<Property> list=propertyModel.getTypeOfHolderBlocking(user,0);
+                for(Property propery:list) toPay+=propery.getHouses()*card.getMoney();
+                break;
+            case 3:
+                toPay=model.getUserCount()*card.getMoney();
+                break;
+        }
+        if(p.getMoney()+toPay>0){
+            p.setMoney(p.getMoney()+ toPay);
+            model.update(p);
+            if(card.getPaymentType()<3){
+                if(toPay<0)model.setMoneyFromTaxes(model.getMoneyFromTaxes()-toPay);
+            }
+            else{
+                List<Player> players=model.getAllPlayers();
+                for(Player player:players){
+                    player.setMoney(player.getMoney()-card.getMoney());
+                    model.update(player);
+                }
+            }
+            model.setPaid(true);
+        }
+        else{
+            h.post(()->Toast.makeText(activity,"Nemate dovoljno novca!",Toast.LENGTH_SHORT).show());
+        }
+    }
+
+    private void movementExecute(Card card, int user) {
+        Player p=model.getPlayer(user);
+        Property to;
+        if(card.getMovement()==1|card.getMovement()==2){
+            List<Property> properties=propertyModel.getOfType(card.getMovement());
+            to=properties.stream().min((e1,e2)->{
+                int dst1=(e1.getId()-p.getPosition())+((e1.getId()>p.getPosition())?0:40);
+                int dst2=(e2.getId()-p.getPosition())+((e2.getId()>p.getPosition())?0:40);
+                return dst1-dst2;
+            }).get();
+            p.setPosition(to.getId());
+        }
+        else{
+            int pos=p.getPosition()+card.getMovement()+(p.getPosition()<card.getMovement()?40:0);
+            to=propertyModel.getPropertyBlocking(pos);
+            p.setPosition(pos);
+        }
+        model.update(p);
+        h.post(()->RouterUtility.routeFromCards(controller,to,user));
+    }
+
+    private void prisonExecute(Card card, int user) {
+        Player p=model.getPlayer(user);
+        if(card.getPrison()==1){
+            //izadji besplatno
+            p.setPrison(p.getPrison()-1);
+        }
+        if(card.getPrison()==2){
+            if(p.getPrison()<0) p.setPrison(p.getPrison()+1);
+            else{
+                p.setPrison(2);
+                p.setPosition(10);
+            }
+        }
+        model.update(p);
+        h.post(()->controller.navigateUp());
     }
 
     @Override

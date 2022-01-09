@@ -124,6 +124,42 @@
         <argument
             android:name="index"
             app:argType="integer" />
+        <argument
+            android:name="user"
+            app:argType="integer"
+            android:defaultValue="0" />
+        <action
+            android:id="@+id/details"
+            app:destination="@id/propertyDetailsFragment"
+            app:popUpTo="@id/tableFragment"
+            />
+        <action
+            android:id="@+id/buy"
+            app:destination="@id/propertyBuyFragment"
+            app:popUpTo="@id/tableFragment"
+            />
+        <action
+            android:id="@+id/to_station"
+            app:destination="@id/propertyStationFragment"
+            app:popUpTo="@id/tableFragment"/>
+        <action
+            android:id="@+id/pay"
+            app:destination="@id/propertyRentFragment" />
+        <action
+            android:id="@+id/taxes"
+            app:destination="@id/propertyPayFragment"
+            app:popUpTo="@id/tableFragment"
+            />
+        <action
+            android:id="@+id/open"
+            app:destination="@id/openCardFragment"
+            app:popUpTo="@id/tableFragment"
+            />
+        <action
+            android:id="@+id/corner"
+            app:destination="@id/cornerFragment"
+            app:popUpTo="@id/tableFragment"
+            />
     </fragment>
     <fragment
         android:id="@+id/cornerFragment"

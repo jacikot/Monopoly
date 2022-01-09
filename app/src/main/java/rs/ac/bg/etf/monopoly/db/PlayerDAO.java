@@ -24,6 +24,9 @@ public interface PlayerDAO {
     @Query("SELECT * FROM Player WHERE game=:game")
     public LiveData<List<Player>> getPlayers(int game);
 
+    @Query("SELECT * FROM Player WHERE game=:game")
+    public List<Player> getAllPlayers(int game);
+
     @Query("SELECT * FROM Player WHERE `index`=:player AND game=:game")
     public Player getPosition(int player, int game);
 
