@@ -73,6 +73,10 @@ public class PropertyModel extends ViewModel {
         return repo.getOfType(type);
     }
 
+    public List<Property> getOfHolder(int h){
+        return repo.getOfHolder(h);
+    }
+
     public static PropertyModel getModel(Repository repo, MainActivity activity){
         ViewModelProvider.Factory factory=new ViewModelProvider.Factory() {
             @NonNull

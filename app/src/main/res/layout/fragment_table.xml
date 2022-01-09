@@ -21,24 +21,40 @@
         />
 
     <TextView
+        android:id="@+id/timer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="32dp"
+        android:textColor="#59372D"
+        android:textAppearance="?attr/textAppearanceHeadline2"
+        app:layout_constraintBottom_toTopOf="@id/map"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/topAppBar"
+        tools:text="00:27:13" />
+
+
+    <TextView
         android:id="@+id/dices"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/topAppBar"
+        app:layout_constraintTop_toBottomOf="@id/map"
         app:layout_constraintBottom_toTopOf="@id/dices2"
-        android:textColor="@color/black"
+        android:textColor="#59372D"
         tools:text="Kockica1: 2"
         android:gravity="center"
+        android:textAppearance="?attr/textAppearanceHeadline6"
         />
     <TextView
         android:id="@+id/dices2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/dices"
-        app:layout_constraintBottom_toTopOf="@id/map"
-        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:textColor="#59372D"
         tools:text="Kockica2: 3"
         android:gravity="center"
+        android:textAppearance="?attr/textAppearanceHeadline6"
         />
 
     <androidx.constraintlayout.widget.ConstraintLayout

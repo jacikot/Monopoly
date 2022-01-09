@@ -25,8 +25,13 @@ import android.widget.Toast;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Observer;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.stream.Collectors;
 
 import rs.ac.bg.etf.monopoly.databinding.FragmentTableBinding;
 import rs.ac.bg.etf.monopoly.db.DBMonopoly;
@@ -44,6 +49,8 @@ public class TableFragment extends Fragment {
     private PropertyModel propertyModel;
     private MainActivity activity;
     private NavController controller;
+    private Timer timer;
+    private Handler mainHanfler=new Handler(Looper.getMainLooper());
 
 
     public TableFragment() {
@@ -66,9 +73,14 @@ public class TableFragment extends Fragment {
             list.add(new Player(1,e,"Lana",100,0,0));
             list.add(new Player(2,e,"Nana",100,0,0));
             list.add(new Player(3,e,"Gana",100,0,0));
+            long gameDuration=60*2;
             model.startGame(list);
+            mainHanfler.post(()->model.setFinalTime(new Date().getTime()+gameDuration*1000));
         });
 
+        model.getFinalTime().observe(this,e->{
+            if(e!=0) startTimer(e);
+        });
 
     }
 
@@ -80,7 +92,12 @@ public class TableFragment extends Fragment {
         // Inflate the layout for this fragment
         amb=FragmentTableBinding.inflate(inflater,container,false);
         TypedArray images=getResources().obtainTypedArray(R.array.ids);
-        Handler mainHanfler=new Handler(Looper.getMainLooper());
+
+        timer=new Timer();
+
+        model.getTimeString().observe(getViewLifecycleOwner(),e->{
+            amb.timer.setText(e);
+        });
         for(int i=0;i<images.length();i++){
             int id=images.getResourceId(i,0);
             int index=i;
@@ -184,4 +201,65 @@ public class TableFragment extends Fragment {
         controller= Navigation.findNavController(view);
 
     }
+
+
+    private void startTimer(long finalTime) {
+
+        Handler handler = new Handler(Looper.getMainLooper());
+
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                long elapsed = finalTime-new Date().getTime();
+
+                int minutes = (int) ((elapsed / (1000 * 60)) % 60);
+                int hours = (int) ((elapsed / (1000 * 60 * 60)) % 24);
+
+                if(minutes==0 && hours==0){
+                    timer.cancel();
+                    String winner=getWinner();
+                    handler.post(()->new MaterialAlertDialogBuilder(activity)
+                            .setTitle("Igra je zavrsena!")
+                            .setMessage("Pobednik je: "+winner)
+                            .setNeutralButton((CharSequence) "Cancel", (dialog, which) -> {
+                                dialog.cancel();
+                                controller.navigateUp();
+                            }).show());
+                }
+                StringBuilder time = new StringBuilder();
+                time.append(String.format("%02d", hours)).append(":");
+                time.append(String.format("%02d", minutes));
+
+                model.setTimeString(time.toString());
+            }
+        }, 0, 1000*60);
+
+    }
+
+    private int calculateWorth(Player p){
+        if(p.getMoney()==-1) return -1;
+        int worth= p.getMoney();
+        List<Property> properties=propertyModel.getOfHolder(p.getIndex());
+        for(Property prop:properties){
+            worth+=prop.getProperty_price();
+            if(prop.getType()==0){
+                worth+=prop.getBuilding_price()*prop.getHouses();
+            }
+        }
+        return worth;
+    }
+
+    private String getWinner(){
+        List<Player> players=model.getAllPlayers();
+        Player p=players.stream().max(Comparator.comparingInt(this::calculateWorth)).get();
+        List<Player> maxs=players.stream().filter(e->{
+            return calculateWorth(e)==calculateWorth(p);
+        }).collect(Collectors.toList());
+        String ret="";
+        for(Player maxp:maxs){
+            ret+=maxp.getName()+" ";
+        }
+        return ret;
+    }
+
 }

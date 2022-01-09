@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
@@ -26,11 +27,13 @@ public class GameModel extends ViewModel {
 
     private static final String  KEY_USER="currentUser";
     private static final String  KEY_DICE="dice";
+    private static final String KEY_TIME="time";
 
     private int currentUser;
     private int lastPlayed=0;
     private LiveData<Integer> dice1;
     private LiveData<Integer> dice2;
+    private LiveData<Long> finalTime;
     private MutableLiveData<Card> cardOpen=new MutableLiveData<>(null);
     private int attempts=0;
     private int oldPossition=0;
@@ -40,7 +43,23 @@ public class GameModel extends ViewModel {
     private boolean paid=true;
     private boolean moved;
     private int moneyFromTaxes;
+    private MutableLiveData<String> timeString=new MutableLiveData<>("00:00");
 
+    public MutableLiveData<String> getTimeString() {
+        return timeString;
+    }
+
+    public void setTimeString(String timeString) {
+        this.timeString.postValue(timeString);
+    }
+
+    public LiveData<Long> getFinalTime() {
+        return finalTime;
+    }
+
+    public void setFinalTime(long finalTime) {
+        ssh.set(KEY_TIME,finalTime);
+    }
 
     public boolean isMoved() {
         return moved;
@@ -106,6 +125,10 @@ public class GameModel extends ViewModel {
             return saved;
         });
         dice2= Transformations.map(ssh.getLiveData(KEY_DICE+2, 0), saved->{
+            return saved;
+        });
+
+        finalTime=Transformations.map(ssh.getLiveData(KEY_TIME, (long)0), saved->{
             return saved;
         });
     }
