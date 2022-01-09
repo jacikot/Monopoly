@@ -11,8 +11,8 @@
         <item>Bolnicki troskovi (-100M)!</item>
         <item>Uplaceno je zivotno osiguranje (+200M)!</item>
         <item>Godisnje renoviranje - Sa racuna Vam se skida 40M po kuci i 200M po hotelu!</item>
-        <item>Greska u banci u Vasu - Isplaceno Vam je 20M po kuci i 100M po hotelu!</item>
-        <item>Rodjendan Vam je! Od svakog igraca dobijate 50M!</item>
+        <item>Greska u banci u Vasu korist - Isplaceno Vam je 20M po kuci i 100M po hotelu!</item>
+        <item>Rodjendan Vam je! Od svakog igraca dobijate 50M (ako nemaju dovoljno, daju koliko imaju)!</item>
         <item>Postali ste predsednik uprave! Platite svima 50M!</item>
     </string-array>
 
@@ -74,10 +74,10 @@
         <item>-50</item>
         <item>-100</item>
         <item>200</item>
-        <item>40</item>
+        <item>-40</item>
         <item>20</item>
         <item>50</item>
-        <item>50</item>
+        <item>-50</item>
     </array>
 
     <array name="to_whom">

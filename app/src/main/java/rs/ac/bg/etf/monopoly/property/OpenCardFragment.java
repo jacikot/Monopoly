@@ -73,19 +73,28 @@ public class OpenCardFragment extends Fragment {
         amb.posed.setImageDrawable(images.getDrawable(args.getIndex()));
         images.recycle();
 
+        if(model.isPaid()){
+            amb.transakcija.setEnabled(false);
+        }
+        else amb.transakcija.setEnabled(true);
+
         if(model.isBought()||!model.isAbleToBuy()){
             amb.otvori.setEnabled(false);
+            amb.transakcija.setEnabled(false);
         }
+
 
 
         model.getCardOpen().observe(getViewLifecycleOwner(),e->{
             if(e==null){
                 amb.otvori.setVisibility(View.VISIBLE);
-                model.setPaid(false);
+                if(model.isAbleToBuy()) model.setPaid(false);
             }
             else{
-                amb.otvori.setVisibility(View.INVISIBLE);
+                amb.poruka.setText(e.getMessage());
+                amb.layout.removeView(amb.otvori);
                 amb.transakcija.setVisibility(View.VISIBLE);
+                if(!model.isPaid()) amb.transakcija.setEnabled(true);
             }
         });
 
@@ -94,11 +103,6 @@ public class OpenCardFragment extends Fragment {
                 Property p=propertyModel.getPropertyBlocking(args.getIndex());
                 List<Card> cards=cardModel.getCardsType(p.getType()-3);
                 int random=(int)(Math.random()*cards.size());
-                h.post(()->{
-                    amb.poruka.setText(cards.get(random).getMessage());
-                    amb.transakcija.setVisibility(View.VISIBLE);
-                    amb.otvori.setVisibility(View.INVISIBLE);
-                });
                 model.setCardOpen(cards.get(random));
             });
         });
@@ -111,6 +115,7 @@ public class OpenCardFragment extends Fragment {
         });
 
         amb.layout.setGravity(Gravity.CENTER);
+        amb.bottomLayout.setGravity(Gravity.CENTER);
 
 
         return amb.getRoot();
@@ -142,23 +147,31 @@ public class OpenCardFragment extends Fragment {
                 for(Property propery:list) toPay+=propery.getHouses()*card.getMoney();
                 break;
             case 3:
-                toPay=model.getUserCount()*card.getMoney();
+                toPay=(model.getUserCount()-1)*card.getMoney();
                 break;
         }
-        if(p.getMoney()+toPay>0){
-            p.setMoney(p.getMoney()+ toPay);
-            model.update(p);
+        if(p.getMoney()+toPay>=0){
             if(card.getPaymentType()<3){
                 if(toPay<0)model.setMoneyFromTaxes(model.getMoneyFromTaxes()-toPay);
             }
             else{
                 List<Player> players=model.getAllPlayers();
                 for(Player player:players){
-                    player.setMoney(player.getMoney()-card.getMoney());
+                    if(player.getIndex()==p.getIndex()) continue;
+                    if(player.getMoney()>=card.getMoney()){
+                        player.setMoney(player.getMoney()-card.getMoney());
+                    }
+                    else {
+                        toPay-=card.getMoney()-player.getMoney();
+                        player.setMoney(0);
+                    }
                     model.update(player);
                 }
             }
+            p.setMoney(p.getMoney()+ toPay);
+            model.update(p);
             model.setPaid(true);
+            h.post(()->controller.navigateUp());
         }
         else{
             h.post(()->Toast.makeText(activity,"Nemate dovoljno novca!",Toast.LENGTH_SHORT).show());
@@ -182,8 +195,9 @@ public class OpenCardFragment extends Fragment {
             to=propertyModel.getPropertyBlocking(pos);
             p.setPosition(pos);
         }
+        model.setMoved(true);
         model.update(p);
-        h.post(()->RouterUtility.routeFromCards(controller,to,user));
+        h.post(()->controller.navigateUp());
     }
 
     private void prisonExecute(Card card, int user) {

@@ -62,12 +62,21 @@ public class CornerFragment extends Fragment {
         CornerFragmentArgs args=CornerFragmentArgs.fromBundle(getArguments());
         amb.posed.setImageDrawable(images.getDrawable(args.getIndex()));
         images.recycle();
-        switch(args.getIndex()){
-            case 0: amb.poruka.setText("Započinjete novi krug! Dobili ste 200M!"); break;
-            case 10: amb.poruka.setText("Dosli ste samo u posetu zatvoru! Mozete da nastavite igru!"); break;
-            case 20: amb.poruka.setText("Cestitamo! Dobijate novac prikupljen od poreza!"); break;
-            case 30: amb.poruka.setText("Idete u zatvor! Pauzirate 2 kruga!"); break;
-        }
+
+        ((MyApplication)activity.getApplication()).getExecutorService().execute(()->{
+            Player p= model.getPlayer(args.getUser());
+            h.post(()->{
+                switch(args.getIndex()){
+                    case 0: amb.poruka.setText("Započinjete novi krug! Dobili ste 200M!"); break;
+                    case 10: if(p.getPrison()<=0) amb.poruka.setText("Dosli ste samo u posetu zatvoru! Mozete da nastavite igru!");
+                            else amb.poruka.setText("U zatvoru ste! Pauzirate 2 kruga!"); break;
+                    case 20: amb.poruka.setText("Cestitamo! Dobijate novac prikupljen od poreza!"); break;
+                    case 30: amb.poruka.setText("Idete u zatvor! Pauzirate 2 kruga!"); break;
+                }
+            });
+
+        });
+
         amb.layout.setGravity(Gravity.CENTER);
 
 
@@ -93,6 +102,7 @@ public class CornerFragment extends Fragment {
             else{
                 p.setPrison(2);
                 p.setPosition(10);
+
             }
             model.update(p);
         });

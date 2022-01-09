@@ -38,7 +38,17 @@ public class GameModel extends ViewModel {
     private boolean ableToBuy;
     private boolean bought;
     private boolean paid=true;
+    private boolean moved;
     private int moneyFromTaxes;
+
+
+    public boolean isMoved() {
+        return moved;
+    }
+
+    public void setMoved(boolean moved) {
+        this.moved = moved;
+    }
 
     public LiveData<Card> getCardOpen() {
         return cardOpen;
@@ -139,10 +149,11 @@ public class GameModel extends ViewModel {
     public Player rollTheDice(LifecycleOwner o){
         bought=false;
         cardOpen.postValue(null);
-//        int dice1=((int)(Math.random()*6))+1;
-//        int dice2=((int)(Math.random()*6))+1;
-        int dice1=0;
-        int dice2=2;
+        int dice1=((int)(Math.random()*6))+1;
+        int dice2=((int)(Math.random()*6))+1;
+
+//        int dice1=30;
+//        int dice2=6;
         android.os.Handler mainHanfler=new Handler(Looper.getMainLooper());
         mainHanfler.post(()->{
             ssh.set(KEY_DICE+1,dice1);
@@ -170,7 +181,7 @@ public class GameModel extends ViewModel {
                 }
                 else if(attempts>2){
                     if(e.get().getPrison()<0){
-                        e.get().setPosition(e.get().getPosition()+1);
+                        e.get().setPrison(e.get().getPrison()+1);
                     }
                     else{
                         e.get().setPrison(2);

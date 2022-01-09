@@ -53,6 +53,7 @@
 
 
                 <LinearLayout
+                    android:id="@+id/bottomLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="25dp"
@@ -64,6 +65,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textAppearance="?attr/textAppearanceBody1"
+                        android:layout_gravity="center"
                         android:textColor="?android:attr/textColorPrimaryInverse"
                         />
                     <com.google.android.material.button.MaterialButton

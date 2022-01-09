@@ -63,7 +63,7 @@ public class TableFragment extends Fragment {
             int e=model.getNextGame();
             List<Player> list=new ArrayList<>();
             list.add(new Player(0,e,"Jana",1500,0,0));
-            list.add(new Player(1,e,"Lana",1500,0,0));
+//            list.add(new Player(1,e,"Lana",1500,0,0));
 //            list.add(new Player(2,e,"Nana",1500,0,0));
 //            list.add(new Player(3,e,"Gana",1500,0,0));
             model.startGame(list);
@@ -94,6 +94,19 @@ public class TableFragment extends Fragment {
                         else model.setAbleToBuy(true);
                         mainHanfler.post(()->RouterUtility.route(controller,k, model.getLastPlayer()));
                     });
+                });
+            });
+        }
+
+        if(model.isMoved()){
+            model.setMoved(false);
+            ((MyApplication)activity.getApplication()).getExecutorService().execute(()->{
+                Player p=model.getPlayer(model.getLastPlayer());
+                Property property=propertyModel.getPropertyBlocking(p.getPosition());
+                model.setAbleToBuy(true);
+                SystemClock.sleep(4000);
+                mainHanfler.post(()->{
+                    RouterUtility.route(controller ,property, model.getLastPlayer());
                 });
             });
         }
