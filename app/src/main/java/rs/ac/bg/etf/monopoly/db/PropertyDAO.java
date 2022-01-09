@@ -34,4 +34,7 @@ public interface PropertyDAO {
 
     @Query("SELECT * FROM Property WHERE type=:type")
     public List<Property> getOfType(int type);
+
+    @Query("SELECT * FROM PROPERTY WHERE holder=:h")
+    public List<Property> getOfHolder(int h);
 }

@@ -18,6 +18,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -103,6 +105,7 @@ public class OpenCardFragment extends Fragment {
                 Property p=propertyModel.getPropertyBlocking(args.getIndex());
                 List<Card> cards=cardModel.getCardsType(p.getType()-3);
                 int random=(int)(Math.random()*cards.size());
+//                int random=0;
                 model.setCardOpen(cards.get(random));
             });
         });
@@ -174,7 +177,34 @@ public class OpenCardFragment extends Fragment {
             h.post(()->controller.navigateUp());
         }
         else{
-            h.post(()->Toast.makeText(activity,"Nemate dovoljno novca!",Toast.LENGTH_SHORT).show());
+            if(propertyModel.isBankruptcy(p.getIndex(),-toPay,p.getMoney())){
+                p.setMoney(-1);
+                model.update(p);
+                model.setPaid(true);
+                h.post(()->Toast.makeText(activity,"Bankrotirali ste!",Toast.LENGTH_SHORT).show());
+                List<Player> players=model.getAllPlayers();
+                if(players.stream().filter(e->{
+                    return e.getMoney()!=-1;
+                }).count()==1){
+                    Player winner=players.stream().filter(e->{
+                        return e.getMoney()!=-1;
+                    }).findFirst().orElse(null);
+                    h.post(()->new MaterialAlertDialogBuilder(activity)
+                            .setTitle("Igra je zavrsena!")
+                            .setMessage("Pobednik je "+winner.getName())
+                            .setPositiveButton((CharSequence) "Return to home", (dialog, which) -> {
+                                dialog.cancel();
+                                controller.popBackStack();
+                                controller.navigateUp();
+                            }).show());
+                }
+                else h.post(()->controller.navigateUp());
+
+            }
+            else{
+                h.post(()->Toast.makeText(activity,"Nemate dovoljno novca!",Toast.LENGTH_SHORT).show());
+            }
+
         }
     }
 

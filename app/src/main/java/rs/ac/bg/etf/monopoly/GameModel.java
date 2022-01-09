@@ -130,6 +130,7 @@ public class GameModel extends ViewModel {
         repo.initProperties(false);
         ableToBuy=false;
         bought=false;
+        paid=true;
     }
 
     public void finishGame(){
@@ -152,8 +153,8 @@ public class GameModel extends ViewModel {
         int dice1=((int)(Math.random()*6))+1;
         int dice2=((int)(Math.random()*6))+1;
 
-//        int dice1=30;
-//        int dice2=6;
+//        int dice1=1;
+//        int dice2=1;
         android.os.Handler mainHanfler=new Handler(Looper.getMainLooper());
         mainHanfler.post(()->{
             ssh.set(KEY_DICE+1,dice1);
@@ -164,8 +165,9 @@ public class GameModel extends ViewModel {
         while(!finish.get()){
             lastPlayed=currentUser;
             e.set(repo.getPlayer(currentUser,currentGame));
-            if(e.get().getPrison()>0){
-                e.get().setPrison(e.get().getPrison()-1);
+            if(e.get().getPrison()>0 || e.get().getMoney()==-1){
+                attempts=0;
+                if(e.get().getMoney()!=-1) e.get().setPrison(e.get().getPrison()-1);
                 currentUser=(currentUser+1)%playerCnt;
             }
             else{

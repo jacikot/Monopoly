@@ -62,10 +62,10 @@ public class TableFragment extends Fragment {
         ((MyApplication)activity.getApplication()).getExecutorService().execute(()->{
             int e=model.getNextGame();
             List<Player> list=new ArrayList<>();
-            list.add(new Player(0,e,"Jana",1500,0,0));
-//            list.add(new Player(1,e,"Lana",1500,0,0));
-//            list.add(new Player(2,e,"Nana",1500,0,0));
-//            list.add(new Player(3,e,"Gana",1500,0,0));
+            list.add(new Player(0,e,"Jana",100,0,0));
+            list.add(new Player(1,e,"Lana",100,0,0));
+            list.add(new Player(2,e,"Nana",100,0,0));
+            list.add(new Player(3,e,"Gana",100,0,0));
             model.startGame(list);
         });
 
@@ -117,11 +117,21 @@ public class TableFragment extends Fragment {
             TypedArray img=getResources().obtainTypedArray(R.array.ids);
             ImageView k=((ImageView)amb.getRoot().findViewById(img.getResourceId(model.getOldPossition(),0)));
             k.clearColorFilter();
-            for(int j=0;j<model.getUserCount();j++){
-                ((ImageView)amb.getRoot().findViewById(img.getResourceId(e.get(j).getPosition(),0))).setColorFilter(Color.parseColor(colors[j]),
-                        PorterDuff.Mode.MULTIPLY);
-            }
-            img.recycle();
+            ((MyApplication)activity.getApplication()).getExecutorService().execute(()->{
+                for(int j=0;j<model.getUserCount();j++){
+                    Player p=model.getPlayer(j);
+                    int index=j;
+                    if(p.getMoney()>=0)
+                        mainHanfler.post(()->{
+                            ((ImageView)amb.getRoot().findViewById(img.getResourceId(e.get(index).getPosition(),0))).setColorFilter(Color.parseColor(colors[index]),
+                                    PorterDuff.Mode.MULTIPLY);
+                        });
+
+                }
+                mainHanfler.post(()-> img.recycle());
+            });
+
+
         });
 
         model.getDice1().observe(getViewLifecycleOwner(),e->{

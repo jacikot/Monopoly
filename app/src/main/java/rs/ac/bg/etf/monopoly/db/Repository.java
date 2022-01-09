@@ -68,6 +68,10 @@ public class Repository {
         });
     }
 
+    public List<Property> getOfHolder(int h){
+        return property.getOfHolder(h);
+    }
+
     public List<Card> getCardsForType(int t){
         return card.getCardsForType(t);
     }

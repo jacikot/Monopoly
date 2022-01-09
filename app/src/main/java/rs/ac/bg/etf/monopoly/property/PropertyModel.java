@@ -57,6 +57,18 @@ public class PropertyModel extends ViewModel {
         }).count()==repo.getCountSameColor(color);
     }
 
+    public boolean isBankruptcy(int user, int requested, int have){
+        List<Property> properties=repo.getOfHolder(user);
+        int sum=0;
+        for(Property p:properties){
+            sum+=p.getProperty_price()/2;
+            if(p.getType()==0){
+                sum+=p.getBuilding_price()*p.getHouses()/2;
+            }
+        }
+        return sum<(requested-have);
+    }
+
     public List<Property> getOfType(int type){
         return repo.getOfType(type);
     }
@@ -71,4 +83,6 @@ public class PropertyModel extends ViewModel {
         };
         return new ViewModelProvider(activity, factory).get(PropertyModel.class);
     }
+
+
 }

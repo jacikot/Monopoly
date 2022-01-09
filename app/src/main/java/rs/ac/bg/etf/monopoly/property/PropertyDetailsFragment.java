@@ -131,7 +131,6 @@ public class PropertyDetailsFragment extends Fragment {
                 h.post(()->{
                    controller.navigateUp();
                 });
-                model.setBought(true);
             });
         });
 
