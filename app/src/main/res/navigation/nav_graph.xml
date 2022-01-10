@@ -12,7 +12,7 @@
         tools:layout="@layout/fragment_home" >
         <action
             android:id="@+id/action_start"
-            app:destination="@id/tableFragment" />
+            app:destination="@id/startGameFragment" />
     </fragment>
     <fragment
         android:id="@+id/tableFragment"
@@ -147,4 +147,13 @@
         android:id="@+id/new_game"
         app:destination="@id/homeFragment"
         app:popUpTo="@id/nav_graph" />
+    <fragment
+        android:id="@+id/startGameFragment"
+        android:name="rs.ac.bg.etf.monopoly.StartGameFragment"
+        android:label="fragment_start_game"
+        tools:layout="@layout/fragment_start_game" >
+        <action
+            android:id="@+id/start"
+            app:destination="@id/tableFragment" />
+    </fragment>
 </navigation>

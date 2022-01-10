@@ -68,14 +68,8 @@ public class TableFragment extends Fragment {
         propertyModel=PropertyModel.getModel(repo, activity);
         model=GameModel.getModel(repo,activity);
         ((MyApplication)activity.getApplication()).getExecutorService().execute(()->{
-            int e=model.getNextGame();
-            List<Player> list=new ArrayList<>();
-            list.add(new Player(0,e,"Jana",100,0,0));
-            list.add(new Player(1,e,"Lana",100,0,0));
-            list.add(new Player(2,e,"Nana",100,0,0));
-            list.add(new Player(3,e,"Gana",100,0,0));
-            long gameDuration=60*2;
-            model.startGame(list);
+            long gameDuration=60*60;
+            model.startGame();
             mainHanfler.post(()->model.setFinalTime(new Date().getTime()+gameDuration*1000));
         });
 

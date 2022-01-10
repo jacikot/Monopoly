@@ -141,15 +141,14 @@ public class GameModel extends ViewModel {
         repo.updatePlayer(p);
     }
 
-    public void startGame(List<Player> players){
-        currentGame=players.get(0).getGame();
-        playerCnt=players.size();
-        for(int i=0;i<players.size();i++){
-            players.get(i).setMoney(1500);
-            players.get(i).setPosition(0);
-            players.get(i).setPrison(0);
-        }
-        repo.insertPlayer(players);
+    public void insertPlayer(Player p){
+        ArrayList<Player> list=new ArrayList<>();
+        list.add(p);
+        repo.insertPlayer(list);
+    }
+    public void startGame(){
+        currentGame=repo.getNextGame()-1;
+        playerCnt=repo.getAllPlayers(currentGame).size();
         repo.initProperties(false);
         ableToBuy=false;
         bought=false;
