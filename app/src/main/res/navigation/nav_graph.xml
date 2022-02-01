@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_start"
             app:destination="@id/startGameFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_blankFragment"
+            app:destination="@id/blankFragment" />
     </fragment>
     <fragment
         android:id="@+id/tableFragment"
@@ -156,4 +159,9 @@
             android:id="@+id/start"
             app:destination="@id/tableFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/blankFragment"
+        android:name="rs.ac.bg.etf.monopoly.BlankFragment"
+        android:label="fragment_blank"
+        tools:layout="@layout/fragment_blank" />
 </navigation>

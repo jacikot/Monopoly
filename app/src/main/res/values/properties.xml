@@ -127,6 +127,11 @@
         <item>@drawable/_porez_luksuz</item>
         <item>@drawable/_srpskih_vladara</item>
     </array>
+
+    <array name="monopolyCover">
+        <item>@drawable/monopoly</item>
+    </array>
+
     
 
     <array name="type">

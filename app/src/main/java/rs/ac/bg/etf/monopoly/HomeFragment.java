@@ -60,6 +60,10 @@ public class HomeFragment extends Fragment {
             });
 
         });
+        amb.results.setOnClickListener(e->{
+            NavDirections dir=HomeFragmentDirections.actionHomeFragmentToBlankFragment();
+            controller.navigate(dir);
+        });
         return amb.getRoot();
     }
 
