@@ -1,12 +1,16 @@
 package rs.ac.bg.etf.monopoly;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 
 import androidx.annotation.Nullable;
@@ -22,7 +26,9 @@ public class BoardView extends View {
 
     List<MyImage> imgs=new ArrayList<>();
     Drawable center;
+    String[]colors;
     private void init(Context context) {
+        colors=getResources().getStringArray(R.array.colors);
         TypedArray images=context.getResources().obtainTypedArray(R.array.images);
         center=context.getResources().obtainTypedArray(R.array.monopolyCover).getDrawable(0);
         for(int i=0;i<images.length();i++){
@@ -89,7 +95,6 @@ public class BoardView extends View {
         center.draw(canvas);
         for(int i=20;i<30;i++){
             imgs.get(i).setCoord(x,y);
-            imgs.get(i).d.
             imgs.get(i).d.setBounds(x,y,x+imgs.get(i).w*partition,y+imgs.get(i).h*partition);
             imgs.get(i).d.draw(canvas);
             x+=imgs.get(i).w*partition;
@@ -116,5 +121,38 @@ public class BoardView extends View {
 
 
         super.onDraw(canvas);
+    }
+
+    public interface Callback{
+        void call(int index);
+    }
+    Callback callback;
+    public void setCallback(Callback callback){
+        this.callback=callback;
+    }
+
+    public OnTouchListener listener= new OnTouchListener() {
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            float x=event.getX(event.getActionIndex());
+            float y=event.getY(event.getActionIndex());
+            int index=0;
+            for(MyImage i:imgs){
+                if(i.x>=x && (i.x+i.w)<x && i.y>=y && (i.y+i.h)<y){
+                    if(callback!=null) callback.call(index);
+                    break;
+                }
+                index++;
+            }
+            return true;
+        }
+    };
+
+    public void useFilter(int field, int color){
+        imgs.get(field).d.setColorFilter(Color.parseColor(colors[color]), PorterDuff.Mode.MULTIPLY);
+    }
+
+    public void clearFilter(int field){
+        imgs.get(field).d.clearColorFilter();
     }
 }
