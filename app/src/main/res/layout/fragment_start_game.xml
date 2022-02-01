@@ -6,165 +6,49 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".StartGameFragment"
     android:background="@drawable/backgound">
-
-
-    <Spinner
-        android:id="@+id/spinner"
-        android:layout_width="100dp"
-        android:backgroundTint="@color/white"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/players"
-        />
     <LinearLayout
-        android:id="@+id/players"
+        android:id="@+id/layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/spinner"
-        app:layout_constraintBottom_toTopOf="@id/start"
+        android:layout_height="0dp"
         android:orientation="vertical"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/add"
+        android:layout_gravity="center"
+        android:layout_margin="16dp"
         >
-        <LinearLayout
+        <TextView
+            android:text="Igraci:"
+            android:textColor="@color/brown"
+            style="@style/TextAppearance.MaterialComponents.Headline3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <EditText
-                android:hint="Igrac 1"
-                android:id="@+id/t1"
-                android:layout_width="200dp"
-                android:textColor="#59372D"
-                android:layout_height="wrap_content"/>
-            <Button
-                android:id="@+id/b1"
-                android:backgroundTint="#59372D"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Dodaj igraca"/>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <EditText
-                android:hint="Igrac 2"
-                android:id="@+id/t2"
-                android:layout_width="200dp"
-                android:textColor="#59372D"
-                android:layout_height="wrap_content"/>
-            <Button
-                android:id="@+id/b2"
-                android:backgroundTint="#59372D"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Dodaj igraca"/>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <EditText
-                android:hint="Igrac 3"
-                android:id="@+id/t3"
-                android:layout_width="200dp"
-                android:textColor="#59372D"
-
-                android:layout_height="wrap_content"/>
-            <Button
-                android:id="@+id/b3"
-                android:backgroundTint="#59372D"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Dodaj igraca"/>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <EditText
-                android:hint="Igrac 4"
-                android:id="@+id/t4"
-                android:layout_width="200dp"
-                android:textColor="#59372D"
-                android:layout_height="wrap_content"/>
-            <Button
-                android:id="@+id/b4"
-                android:backgroundTint="#59372D"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Dodaj igraca"/>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <EditText
-                android:hint="Igrac 5"
-                android:id="@+id/t5"
-                android:layout_width="200dp"
-                android:textColor="#59372D"
-                android:layout_height="wrap_content"/>
-            <Button
-                android:id="@+id/b5"
-                android:backgroundTint="#59372D"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Dodaj igraca"/>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <EditText
-                android:hint="Igrac 6"
-                android:id="@+id/t6"
-                android:layout_width="200dp"
-                android:textColor="#59372D"
-                android:layout_height="wrap_content"/>
-            <Button
-                android:id="@+id/b6"
-                android:backgroundTint="#59372D"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Dodaj igraca"/>
-        </LinearLayout><LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <EditText
-                android:hint="Igrac 7"
-                android:id="@+id/t7"
-                android:layout_width="200dp"
-                android:textColor="#59372D"
-                android:layout_height="wrap_content"/>
-            <Button
-                android:id="@+id/b7"
-                android:backgroundTint="#59372D"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Dodaj igraca"/>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <EditText
-                android:hint="Igrac 8"
-                android:id="@+id/t8"
-                android:layout_width="200dp"
-                android:textColor="#59372D"
-                android:layout_height="wrap_content"/>
-            <Button
-                android:id="@+id/b8"
-                android:backgroundTint="#59372D"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Dodaj igraca"/>
-        </LinearLayout>
+             />
 
     </LinearLayout>
+
+
+
+
+
+    <Button
+        android:id="@+id/add"
+        android:text="Dodaj igraca"
+        android:textColor="#59372D"
+        android:textSize="20sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layout"
+        app:layout_constraintBottom_toTopOf="@id/start"
+        app:icon="@drawable/outline_add_24"
+        style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
+    />
 
     <Button
         android:id="@+id/start"
@@ -176,7 +60,7 @@
         style="?attr/materialButtonOutlinedStyle"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/players"
+        app:layout_constraintTop_toBottomOf="@id/add"
         app:layout_constraintBottom_toBottomOf="parent"
         />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -85,7 +86,6 @@ public class TableFragment extends Fragment {
                     Player p=model.rollTheDice(TableFragment.this);
                     Property property=propertyModel.getPropertyBlocking(p.getPosition());
                     model.setAbleToBuy(true);
-                    soundActivator.start(activity);
                     SystemClock.sleep(4000);
                     mainHanfler.post(()->{
                         RouterUtility.route(controller ,property, model.getLastPlayer());
@@ -95,6 +95,9 @@ public class TableFragment extends Fragment {
                 return true;
             }
             else Toast.makeText(activity,"Niste platili dazbine!",Toast.LENGTH_SHORT).show();
+            return false;
+        },()->{
+            soundActivator.start(activity);
             return false;
         });
 
@@ -163,6 +166,7 @@ public class TableFragment extends Fragment {
                                     PorterDuff.Mode.MULTIPLY);
                         });
 
+
                 }
                 mainHanfler.post(()-> img.recycle());
             });
@@ -177,23 +181,6 @@ public class TableFragment extends Fragment {
         model.getDice2().observe(getViewLifecycleOwner(),e->{
             amb.dices2.setText("Kockica 2: "+e);
         });
-
-//        amb.topAppBar.getMenu().getItem(0).setOnMenuItemClickListener(e->{
-//            if(model.isPaid()){
-//                ((MyApplication)activity.getApplication()).getExecutorService().execute(()->{
-//                    Player p=model.rollTheDice(TableFragment.this);
-//                    Property property=propertyModel.getPropertyBlocking(p.getPosition());
-//                    model.setAbleToBuy(true);
-//                    SystemClock.sleep(4000);
-//                    mainHanfler.post(()->{
-//                        RouterUtility.route(controller ,property, model.getLastPlayer());
-//                    });
-//
-//                });
-//            }
-//            else Toast.makeText(activity,"Niste platili dazbine!",Toast.LENGTH_SHORT).show();
-//           return true;
-//        });
 
 
 

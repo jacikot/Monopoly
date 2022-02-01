@@ -43,6 +43,15 @@ public class GameModel extends ViewModel {
     private boolean paid=true;
     private boolean moved;
     private int moneyFromTaxes;
+
+    public int getCurrentGame() {
+        return currentGame;
+    }
+
+    public void setCurrentGame(int currentGame) {
+        this.currentGame = currentGame;
+    }
+
     private MutableLiveData<String> timeString=new MutableLiveData<>("00:00");
 
     public MutableLiveData<String> getTimeString() {

@@ -17,11 +17,14 @@ public class Shaker implements DefaultLifecycleObserver {
 
     private SensorManager manager;
     private long lastUpdate;
-    private static final int SHAKE_TRESHOLD=80;
+    private static final int SHAKE_TRESHOLD=200;
     private float lastAxis[]=new float[3];
     private Context context;
     private boolean active=false;
-    private Callback callback;
+    private Callback start;
+    private Callback end;
+
+    private boolean shakingDetected;
 
     public interface Callback{
         boolean call();
@@ -47,14 +50,21 @@ public class Shaker implements DefaultLifecycleObserver {
                 float y=event.values[1];
                 float z=event.values[2];
                 float speed=Math.abs(x+y+z-lastAxis[0]-lastAxis[1]-lastAxis[2])/diffTime*1000;
+                float a=(float) Math.abs(Math.sqrt(x*x+y*y+z*z)
+                        -Math.sqrt(lastAxis[0]*lastAxis[0]+lastAxis[1]*lastAxis[1]+lastAxis[2]*lastAxis[2]));
                 lastAxis[0] = x;
                 lastAxis[1] = y;
                 lastAxis[2] = z;
-                Log.d("accel",""+x+" "+y+" "+z+" "+speed);
-                if(speed>SHAKE_TRESHOLD){
-                    active=!callback.call();
-                }
+                Log.d("accel",""+x+" "+y+" "+z+" "+speed+" "+Math.sqrt(x*x+y*y+z*z)+" "+Math.sqrt(x*x+y*y+z*z));
+                if(speed>SHAKE_TRESHOLD && !shakingDetected){
+                    shakingDetected=true;
+                    start.call();
 
+                }
+                if(a<1 && Math.sqrt(x*x+y*y+z*z)<10 &&shakingDetected){
+                    shakingDetected=false;
+                    active=!end.call();
+                }
             }
         }
 
@@ -67,12 +77,14 @@ public class Shaker implements DefaultLifecycleObserver {
     @Override
     public void onDestroy(@NonNull LifecycleOwner owner) {
         active=false;
-
+        //end.call();
     }
 
-    public Shaker(Context context, Callback callback){
-        this.context=context;
-        this.callback=callback;
 
+
+    public Shaker(Context context, Callback end, Callback start){
+        this.context=context;
+        this.start=start;
+        this.end=end;
     }
 }

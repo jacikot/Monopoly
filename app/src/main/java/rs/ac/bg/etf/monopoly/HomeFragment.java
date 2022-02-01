@@ -10,6 +10,8 @@ import androidx.navigation.NavController;
 import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,9 +48,17 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         amb=FragmentHomeBinding.inflate(inflater,container,false);
+        Handler h=new Handler(Looper.getMainLooper());
         amb.start.setOnClickListener(e->{
-            NavDirections action=HomeFragmentDirections.actionStart();
-            controller.navigate(action);
+            ((MyApplication)activity.getApplication()).getExecutorService().execute(()->{
+                int next=model.getNextGame();
+                model.setCurrentGame(next);
+                h.post(()->{
+                    NavDirections action=HomeFragmentDirections.actionStart();
+                    controller.navigate(action);
+                });
+            });
+
         });
         return amb.getRoot();
     }
