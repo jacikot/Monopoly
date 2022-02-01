@@ -52,6 +52,8 @@ public class TableFragment extends Fragment {
     private NavController controller;
     private Timer timer;
     private Handler mainHanfler=new Handler(Looper.getMainLooper());
+    private Shaker shaker;
+    private SoundActivator soundActivator;
 
 
     public TableFragment() {
@@ -63,6 +65,7 @@ public class TableFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activity= (MainActivity) requireActivity();
+        soundActivator=new SoundActivator();
         DBMonopoly db=DBMonopoly.getInstance(activity);
         Repository repo=new Repository(activity,db.getDaoProperty(),db.getDaoPlayer(), db.getDaoCard());
         propertyModel=PropertyModel.getModel(repo, activity);
@@ -75,6 +78,24 @@ public class TableFragment extends Fragment {
 
         model.getFinalTime().observe(this,e->{
             if(e!=0) startTimer(e);
+        });
+        shaker=new Shaker(activity, ()->{
+            if(model.isPaid()){
+                ((MyApplication)activity.getApplication()).getExecutorService().execute(()->{
+                    Player p=model.rollTheDice(TableFragment.this);
+                    Property property=propertyModel.getPropertyBlocking(p.getPosition());
+                    model.setAbleToBuy(true);
+                    soundActivator.start(activity);
+                    SystemClock.sleep(4000);
+                    mainHanfler.post(()->{
+                        RouterUtility.route(controller ,property, model.getLastPlayer());
+                    });
+
+                });
+                return true;
+            }
+            else Toast.makeText(activity,"Niste platili dazbine!",Toast.LENGTH_SHORT).show();
+            return false;
         });
 
     }
@@ -89,6 +110,9 @@ public class TableFragment extends Fragment {
         TypedArray images=getResources().obtainTypedArray(R.array.ids);
 
         timer=new Timer();
+
+        getViewLifecycleOwner().getLifecycle().addObserver(shaker);
+        getViewLifecycleOwner().getLifecycle().addObserver(soundActivator);
 
         model.getTimeString().observe(getViewLifecycleOwner(),e->{
             amb.timer.setText(e);
@@ -154,21 +178,22 @@ public class TableFragment extends Fragment {
             amb.dices2.setText("Kockica 2: "+e);
         });
 
-        amb.topAppBar.getMenu().getItem(0).setOnMenuItemClickListener(e->{
-            if(model.isPaid()){
-                ((MyApplication)activity.getApplication()).getExecutorService().execute(()->{
-                    Player p=model.rollTheDice(TableFragment.this);
-                    Property property=propertyModel.getPropertyBlocking(p.getPosition());
-                    model.setAbleToBuy(true);
-                    SystemClock.sleep(4000);
-                    mainHanfler.post(()->{
-                        RouterUtility.route(controller ,property, model.getLastPlayer());
-                    });
-                });
-            }
-            else Toast.makeText(activity,"Niste platili dazbine!",Toast.LENGTH_SHORT).show();
-           return true;
-        });
+//        amb.topAppBar.getMenu().getItem(0).setOnMenuItemClickListener(e->{
+//            if(model.isPaid()){
+//                ((MyApplication)activity.getApplication()).getExecutorService().execute(()->{
+//                    Player p=model.rollTheDice(TableFragment.this);
+//                    Property property=propertyModel.getPropertyBlocking(p.getPosition());
+//                    model.setAbleToBuy(true);
+//                    SystemClock.sleep(4000);
+//                    mainHanfler.post(()->{
+//                        RouterUtility.route(controller ,property, model.getLastPlayer());
+//                    });
+//
+//                });
+//            }
+//            else Toast.makeText(activity,"Niste platili dazbine!",Toast.LENGTH_SHORT).show();
+//           return true;
+//        });
 
 
 
