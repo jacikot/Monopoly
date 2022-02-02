@@ -75,6 +75,9 @@ public class OpenCardFragment extends Fragment {
         OpenCardFragmentArgs args=OpenCardFragmentArgs.fromBundle(getArguments());
         amb.posed.setImageDrawable(images.getDrawable(args.getIndex()));
         images.recycle();
+        amb.topAppBar.setNavigationOnClickListener(e->{
+            controller.navigateUp();
+        });
 
         if(model.isPaid()){
             amb.transakcija.setEnabled(false);

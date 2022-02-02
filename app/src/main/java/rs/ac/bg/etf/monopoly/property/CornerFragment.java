@@ -86,6 +86,9 @@ public class CornerFragment extends Fragment {
             case 20: takeFromBoard(args.getUser()); break;
             case 30: gotoPrison(args.getUser());break;
         }
+        amb.topAppBar.setNavigationOnClickListener(e->{
+            controller.navigateUp();
+        });
 
         return amb.getRoot();
     }

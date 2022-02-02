@@ -118,6 +118,9 @@ public class StartGameFragment extends Fragment {
             amb.recyclerView.setLayoutManager(new LinearLayoutManager(activity));
         });
 
+        amb.topAppBar.setNavigationOnClickListener(e->{
+            controller.navigateUp();
+        });
         return amb.getRoot();
     }
 

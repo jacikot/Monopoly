@@ -66,6 +66,9 @@ public class PropertyPayFragment extends Fragment {
         amb.posed.setImageDrawable(images.getDrawable(args.getIndex()));
         images.recycle();
 
+        amb.topAppBar.setNavigationOnClickListener(e->{
+            controller.navigateUp();
+        });
 
 
         repo.getProperty(args.getIndex()).observe(getViewLifecycleOwner(),e->{

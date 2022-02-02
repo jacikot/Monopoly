@@ -70,6 +70,9 @@ public class PropertyRentFragment extends Fragment {
         PropertyRentFragmentArgs args=PropertyRentFragmentArgs.fromBundle(getArguments());
         amb.posed.setImageDrawable(images.getDrawable(args.getIndex()));
         images.recycle();
+        amb.topAppBar.setNavigationOnClickListener(e->{
+            controller.navigateUp();
+        });
 
         repo.getProperty(args.getIndex()).observe(getViewLifecycleOwner(),e->{
             if(amb.nekretnine.getChildCount()>1)
