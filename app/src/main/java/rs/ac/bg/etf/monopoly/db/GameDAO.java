@@ -1,6 +1,7 @@
 package rs.ac.bg.etf.monopoly.db;
 
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
@@ -27,5 +28,8 @@ public interface GameDAO {
 
     @Query("UPDATE Game SET status=0,duration=:finishTime-start WHERE status=1")
     void finish(double finishTime);
+
+    @Query("DELETE FROM Game")
+    void deleteAll();
 
 }

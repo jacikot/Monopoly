@@ -3,6 +3,7 @@ package rs.ac.bg.etf.monopoly;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import rs.ac.bg.etf.monopoly.databinding.ActivityMainBinding;
@@ -15,7 +16,7 @@ public class MainActivity extends AppCompatActivity {
 
     private DBMonopoly database;
     private GameModel model;
-    private static final String shared_NAME="locals";
+    public static final String shared_NAME="locals";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +32,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         model=GameModel.getModel(repo,this);
-        model.setSharedPrefs(getSharedPreferences(shared_NAME, Context.MODE_PRIVATE));
+        SharedPreferences preferences=getSharedPreferences(shared_NAME, Context.MODE_PRIVATE);
+        model.setSharedPrefs(preferences);
+        if(!preferences.contains(SettingsFragment.SENSITIVITY_KEY))
+            preferences.edit().putInt(SettingsFragment.SENSITIVITY_KEY,200).commit();
     }
 }

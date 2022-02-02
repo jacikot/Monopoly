@@ -1,6 +1,7 @@
 package rs.ac.bg.etf.monopoly;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -17,9 +18,9 @@ public class Shaker implements DefaultLifecycleObserver {
 
     private SensorManager manager;
     private long lastUpdate;
-    private static final int SHAKE_TRESHOLD=200;
+    private final int SHAKE_TRESHOLD;
     private float lastAxis[]=new float[3];
-    private Context context;
+    private MainActivity context;
     private boolean active=false;
     private Callback start;
     private Callback end;
@@ -82,9 +83,12 @@ public class Shaker implements DefaultLifecycleObserver {
 
 
 
-    public Shaker(Context context, Callback end, Callback start){
+    private SharedPreferences preferences;
+    public Shaker(MainActivity context, Callback end, Callback start){
         this.context=context;
         this.start=start;
         this.end=end;
+        preferences=context.getSharedPreferences(MainActivity.shared_NAME, Context.MODE_PRIVATE);
+        SHAKE_TRESHOLD=preferences.getInt(SettingsFragment.SENSITIVITY_KEY,10000);
     }
 }

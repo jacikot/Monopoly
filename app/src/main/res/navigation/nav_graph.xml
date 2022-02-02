@@ -16,6 +16,9 @@
         <action
             android:id="@+id/action_show_list"
             app:destination="@id/blankFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
     </fragment>
     <fragment
         android:id="@+id/tableFragment"
@@ -164,4 +167,9 @@
         android:name="rs.ac.bg.etf.monopoly.ResultListFragment"
         android:label="fragment_blank"
         tools:layout="@layout/result_list_fragment" />
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="rs.ac.bg.etf.monopoly.SettingsFragment"
+        android:label="fragment_settings"
+        tools:layout="@layout/fragment_settings" />
 </navigation>

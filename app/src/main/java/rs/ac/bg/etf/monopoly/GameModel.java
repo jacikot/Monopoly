@@ -85,6 +85,7 @@ public class GameModel extends ViewModel {
 
     public void setFinalTime(long finalTime) {
         preferences.edit().putLong(KEY_TIME,finalTime).commit();
+        this.finalTime=finalTime;
     }
 
     public boolean isMoved() {
@@ -208,6 +209,13 @@ public class GameModel extends ViewModel {
         paid=true;
     }
 
+    public void deleteAll(){
+        repo.deleteAllGames();
+    }
+
+    public SharedPreferences getSePreferences(){
+        return preferences;
+    }
 
     //promeni ovo
     public int getUserCount(){

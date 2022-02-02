@@ -33,4 +33,7 @@ public interface PlayerDAO {
     @Query("SELECT * FROM Player WHERE `index`=:player AND game=:game")
     public Player getPosition(int player, int game);
 
+    @Query("DELETE FROM Player")
+    void deleteAll();
+
 }

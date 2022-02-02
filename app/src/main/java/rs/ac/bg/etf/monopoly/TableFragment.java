@@ -56,11 +56,15 @@ public class TableFragment extends Fragment {
     private Handler mainHanfler=new Handler(Looper.getMainLooper());
     private Shaker shaker;
     private SoundActivator soundActivator;
+    private long gameDuration=60*2;
 
 
     public TableFragment() {
         // Required empty public constructor
     }
+
+    Shaker.Callback callbackEnd;
+    Shaker.Callback callbackStart;
 
 
     @Override
@@ -73,16 +77,14 @@ public class TableFragment extends Fragment {
         propertyModel=PropertyModel.getModel(repo, activity);
         model=GameModel.getModel(repo,activity);
         ((MyApplication)activity.getApplication()).getExecutorService().execute(()->{
-            long gameDuration=60*2;
             model.startGame();
-            mainHanfler.post(()->model.setFinalTime(new Date().getTime()+gameDuration*1000));
         });
 
         timer=new Timer();
         model.setTimer(timer);
-
+        model.setFinalTime(new Date().getTime()+gameDuration*1000);
         startTimer(model.getFinalTime());
-        shaker=new Shaker(activity, ()->{
+        callbackEnd=()->{
             if(model.isPaid()){
                 ((MyApplication)activity.getApplication()).getExecutorService().execute(()->{
                     Player p=model.rollTheDice(TableFragment.this);
@@ -98,12 +100,14 @@ public class TableFragment extends Fragment {
             }
             else Toast.makeText(activity,"Niste platili dazbine!",Toast.LENGTH_SHORT).show();
             return false;
-        },()->{
+        };
+        callbackStart=()->{
             if(model.isPaid()){
                 soundActivator.start(activity);
             }
             return false;
-        });
+        };
+        shaker=new Shaker(activity,callbackEnd ,callbackStart);
 
     }
 
@@ -121,16 +125,27 @@ public class TableFragment extends Fragment {
         model.getTimeString().observe(getViewLifecycleOwner(),e->{
             amb.timer.setText(e);
         });
-        amb.board.setCallback((index)->{
+        BoardView.Callback c=(index)->{
             propertyModel.getProperty(index).observe(getViewLifecycleOwner(),k->{
-                    ((MyApplication)activity.getApplication()).getExecutorService().execute(()-> {
-                        Player p=model.getPlayer(model.getLastPlayer());
-                        if(p.getPosition()!=index) model.setAbleToBuy(false);
-                        else model.setAbleToBuy(true);
-                        mainHanfler.post(()->RouterUtility.route(controller,k, model.getLastPlayer()));
-                    });
+                ((MyApplication)activity.getApplication()).getExecutorService().execute(()-> {
+                    Player p=model.getPlayer(model.getLastPlayer());
+                    if(p.getPosition()!=index) model.setAbleToBuy(false);
+                    else model.setAbleToBuy(true);
+                    mainHanfler.post(()->RouterUtility.route(controller,k, model.getLastPlayer()));
                 });
+            });
+        };
+        amb.board.setCallback(c);
+        amb.topAppBar.getMenu().getItem(0).setOnMenuItemClickListener(e->{
+            ((MyApplication)activity.getApplication()).getExecutorService().execute(()-> {
+                callbackStart.call();
+                SystemClock.sleep(2000);
+                callbackEnd.call();
+            });
+
+            return true;
         });
+
         amb.board.setOnTouchListener(amb.board.listener);
 
 
@@ -140,7 +155,7 @@ public class TableFragment extends Fragment {
                 Player p=model.getPlayer(model.getLastPlayer());
                 Property property=propertyModel.getPropertyBlocking(p.getPosition());
                 model.setAbleToBuy(true);
-                SystemClock.sleep(4000);
+                SystemClock.sleep(2000);
                 mainHanfler.post(()->{
                     RouterUtility.route(controller ,property, model.getLastPlayer());
                 });

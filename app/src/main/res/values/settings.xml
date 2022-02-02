@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="sensitivity">
+        <item>Jako osetljivo</item>
+        <item>Srednje osetljivo</item>
+        <item>Slabo osetljivo</item>
+        <item>Onemoguci</item>
+    </string-array>
+    <array name="sensitivity_values">
+        <item>100</item>
+        <item>200</item>
+        <item>400</item>
+        <item>10000</item>
+    </array>
+    
+</resources>

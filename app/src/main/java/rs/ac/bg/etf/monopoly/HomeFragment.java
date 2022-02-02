@@ -63,6 +63,11 @@ public class HomeFragment extends Fragment {
             NavDirections dir=HomeFragmentDirections.actionShowList();
             controller.navigate(dir);
         });
+
+        amb.settings.setOnClickListener(e->{
+            NavDirections dir=HomeFragmentDirections.actionHomeFragmentToSettingsFragment();
+            controller.navigate(dir);
+        });
         return amb.getRoot();
     }
 

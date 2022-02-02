@@ -50,6 +50,11 @@ public class Repository {
         return player.getAllGamePlayers();
     }
 
+    public void deleteAllGames(){
+        player.deleteAll();
+        game.deleteAll();
+    }
+
     public void insert(Property p){
         property.insert(p);
     }

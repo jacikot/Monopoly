@@ -19,6 +19,7 @@
             style="@style/Widget.MaterialComponents.Toolbar.Surface"
             android:backgroundTint="#59372D"
             app:layout_constraintTop_toTopOf="parent"
+            app:menu="@menu/results_menu"
             />
 
         <androidx.recyclerview.widget.RecyclerView

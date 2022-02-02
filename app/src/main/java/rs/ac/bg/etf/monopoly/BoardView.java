@@ -40,6 +40,7 @@ public class BoardView extends View {
         TypedArray images=context.getResources().obtainTypedArray(R.array.images);
         center=context.getResources().obtainTypedArray(R.array.monopolyCover).getDrawable(0);
         for(int i=0;i<images.length();i++){
+            images.getDrawable(i).clearColorFilter();
             imgs.add(new MyImage(images.getDrawable(i)));
             if(i%10==0){
                 imgs.get(i).h=7;
