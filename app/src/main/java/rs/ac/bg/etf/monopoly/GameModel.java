@@ -1,5 +1,6 @@
 package rs.ac.bg.etf.monopoly;
 
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Looper;
 
@@ -15,11 +16,14 @@ import androidx.lifecycle.ViewModelProvider;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Timer;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 import rs.ac.bg.etf.monopoly.db.Card;
+import rs.ac.bg.etf.monopoly.db.Game;
 import rs.ac.bg.etf.monopoly.db.Player;
+import rs.ac.bg.etf.monopoly.db.Property;
 import rs.ac.bg.etf.monopoly.db.Repository;
 import rs.ac.bg.etf.monopoly.property.PropertyModel;
 
@@ -31,9 +35,10 @@ public class GameModel extends ViewModel {
 
     private int currentUser;
     private int lastPlayed=0;
-    private LiveData<Integer> dice1;
-    private LiveData<Integer> dice2;
-    private LiveData<Long> finalTime;
+    private MutableLiveData<Integer> dice1=new MutableLiveData<>();
+    private MutableLiveData<Integer> dice2=new MutableLiveData<>();
+    private long finalTime;
+    private Timer timer;
     private MutableLiveData<Card> cardOpen=new MutableLiveData<>(null);
     private int attempts=0;
     private int oldPossition=0;
@@ -43,6 +48,18 @@ public class GameModel extends ViewModel {
     private boolean paid=true;
     private boolean moved;
     private int moneyFromTaxes;
+
+    public Timer getTimer() {
+        return timer;
+    }
+
+    public void stopTimer(){
+        if(timer!=null) timer.cancel();
+    }
+
+    public void setTimer(Timer timer) {
+        this.timer = timer;
+    }
 
     public int getCurrentGame() {
         return currentGame;
@@ -62,12 +79,12 @@ public class GameModel extends ViewModel {
         this.timeString.postValue(timeString);
     }
 
-    public LiveData<Long> getFinalTime() {
+    public long getFinalTime() {
         return finalTime;
     }
 
     public void setFinalTime(long finalTime) {
-        ssh.set(KEY_TIME,finalTime);
+        preferences.edit().putLong(KEY_TIME,finalTime).commit();
     }
 
     public boolean isMoved() {
@@ -89,6 +106,11 @@ public class GameModel extends ViewModel {
     public List<Player> getAllPlayers(){
         return repo.getAllPlayers(currentGame);
     }
+    public List<Player> getAllPlayersEveryGame(){
+        return repo.getAllGamePlayers();
+    }
+
+
 
     public int getMoneyFromTaxes() {
         return moneyFromTaxes;
@@ -122,28 +144,50 @@ public class GameModel extends ViewModel {
         this.ableToBuy = ableToBuy;
     }
 
+
+
     private int playerCnt;
-    private SavedStateHandle ssh;
     private Repository repo;
     private ArrayList<MutableLiveData<Integer>> possitions=new ArrayList<>();
 
-    public GameModel(SavedStateHandle ssh){
-        this.ssh=ssh;
+    public GameModel(){ }
 
-        dice1= Transformations.map(ssh.getLiveData(KEY_DICE+1, 0), saved->{
-            return saved;
-        });
-        dice2= Transformations.map(ssh.getLiveData(KEY_DICE+2, 0), saved->{
-            return saved;
-        });
-
-        finalTime=Transformations.map(ssh.getLiveData(KEY_TIME, (long)0), saved->{
-            return saved;
-        });
+    private SharedPreferences preferences;
+    public void setSharedPrefs(SharedPreferences pref){
+        preferences=pref;
+        finalTime=preferences.getLong(KEY_TIME,0);
+        dice1.postValue(preferences.getInt(KEY_DICE+1,0));
+        dice2.postValue(preferences.getInt(KEY_DICE+2,0));
     }
 
     public int getNextGame(){
         return repo.getNextGame();
+    }
+
+    public void startNextGame(){
+        currentGame= repo.startGame();
+    }
+
+    public int calculateWorth(Player p){
+        if(p.getMoney()==-1) return -1;
+        int worth= p.getMoney();
+        List<Property> properties=repo.getOfHolder(p.getIndex());
+        for(Property prop:properties){
+            worth+=prop.getProperty_price();
+            if(prop.getType()==0){
+                worth+=prop.getBuilding_price()*prop.getHouses();
+            }
+        }
+        return worth;
+    }
+
+    public void finishGame(){
+        repo.finishCurrentGame();
+        repo.getAllPlayers(currentGame).forEach(p->{
+            p.setEvaluation(calculateWorth(p));
+            repo.updatePlayer(p);
+        });
+        if(timer!=null) timer.cancel();
     }
 
     public void update(Player p){
@@ -164,9 +208,6 @@ public class GameModel extends ViewModel {
         paid=true;
     }
 
-    public void finishGame(){
-        //radi nesto
-    }
 
     //promeni ovo
     public int getUserCount(){
@@ -177,6 +218,13 @@ public class GameModel extends ViewModel {
         return oldPossition;
     }
 
+    public void setOldPossition(int pos){
+        oldPossition=pos;
+    }
+
+    public List<Game> getAllFinishedGames(){
+        return repo.getAllFinishedGames();
+    }
 
     public Player rollTheDice(LifecycleOwner o){
         bought=false;
@@ -184,13 +232,10 @@ public class GameModel extends ViewModel {
         int dice1=((int)(Math.random()*6))+1;
         int dice2=((int)(Math.random()*6))+1;
 
-//        int dice1=1;
-//        int dice2=1;
-        android.os.Handler mainHanfler=new Handler(Looper.getMainLooper());
-        mainHanfler.post(()->{
-            ssh.set(KEY_DICE+1,dice1);
-            ssh.set(KEY_DICE+2,dice2);
-        });
+        preferences.edit().putInt(KEY_DICE+1,dice1).putInt(KEY_DICE+2,dice2).commit();
+        this.dice1.postValue(dice1);
+        this.dice2.postValue(dice2);
+
         AtomicReference<Player> e=new AtomicReference<>();
         AtomicBoolean finish=new AtomicBoolean(false);
         while(!finish.get()){

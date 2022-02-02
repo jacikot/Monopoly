@@ -1,6 +1,7 @@
 package rs.ac.bg.etf.monopoly.db;
 
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import rs.ac.bg.etf.monopoly.MainActivity;
@@ -15,13 +16,25 @@ public class Player {
     int position;
     int prison;
 
-    public Player(int index, int game, String name, int money, int position, int prison) {
+
+    int evaluation;
+
+    public int getEvaluation() {
+        return evaluation;
+    }
+
+    public void setEvaluation(int evaluation) {
+        this.evaluation = evaluation;
+    }
+
+    public Player(int index, int game, String name, int money, int position, int prison,int evaluation) {
         this.index = index;
         this.game = game;
         this.name = name;
         this.money = money;
         this.position = position;
         this.prison = prison;
+        this.evaluation=evaluation;
     }
 
     public int getIndex() {

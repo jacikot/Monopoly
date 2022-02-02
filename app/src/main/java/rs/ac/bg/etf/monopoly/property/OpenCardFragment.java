@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -189,14 +190,19 @@ public class OpenCardFragment extends Fragment {
                     Player winner=players.stream().filter(e->{
                         return e.getMoney()!=-1;
                     }).findFirst().orElse(null);
-                    h.post(()->new MaterialAlertDialogBuilder(activity)
-                            .setTitle("Igra je zavrsena!")
-                            .setMessage("Pobednik je "+winner.getName())
-                            .setPositiveButton((CharSequence) "Return to home", (dialog, which) -> {
-                                dialog.cancel();
-                                controller.popBackStack();
-                                controller.navigateUp();
-                            }).show());
+                    model.finishGame();
+                    h.post(()->{
+                        AlertDialog dd=new MaterialAlertDialogBuilder(activity)
+                                .setTitle("Igra je zavrsena!")
+                                .setMessage("Pobednik je "+winner.getName())
+                                .setPositiveButton((CharSequence) "Return to home", (dialog, which) -> {
+                                    dialog.cancel();
+                                    controller.popBackStack();
+                                    controller.navigateUp();
+                                }).create();
+                        dd.setCanceledOnTouchOutside(false);
+                        dd.show();
+                    });
                 }
                 else h.post(()->controller.navigateUp());
 
@@ -218,11 +224,13 @@ public class OpenCardFragment extends Fragment {
                 int dst2=(e2.getId()-p.getPosition())+((e2.getId()>p.getPosition())?0:40);
                 return dst1-dst2;
             }).get();
+            model.setOldPossition(p.getPosition());
             p.setPosition(to.getId());
         }
         else{
             int pos=p.getPosition()+card.getMovement()+(p.getPosition()<card.getMovement()?40:0);
             to=propertyModel.getPropertyBlocking(pos);
+            model.setOldPossition(p.getPosition());
             p.setPosition(pos);
         }
         model.setMoved(true);
@@ -240,6 +248,7 @@ public class OpenCardFragment extends Fragment {
             if(p.getPrison()<0) p.setPrison(p.getPrison()+1);
             else{
                 p.setPrison(2);
+                model.setOldPossition(p.getPosition());
                 p.setPosition(10);
             }
         }

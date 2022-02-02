@@ -51,8 +51,7 @@ public class HomeFragment extends Fragment {
         Handler h=new Handler(Looper.getMainLooper());
         amb.start.setOnClickListener(e->{
             ((MyApplication)activity.getApplication()).getExecutorService().execute(()->{
-                int next=model.getNextGame();
-                model.setCurrentGame(next);
+                model.startNextGame();
                 h.post(()->{
                     NavDirections action=HomeFragmentDirections.actionStart();
                     controller.navigate(action);

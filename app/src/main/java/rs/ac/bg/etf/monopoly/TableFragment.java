@@ -9,6 +9,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -72,14 +73,15 @@ public class TableFragment extends Fragment {
         propertyModel=PropertyModel.getModel(repo, activity);
         model=GameModel.getModel(repo,activity);
         ((MyApplication)activity.getApplication()).getExecutorService().execute(()->{
-            long gameDuration=60*60;
+            long gameDuration=60*2;
             model.startGame();
             mainHanfler.post(()->model.setFinalTime(new Date().getTime()+gameDuration*1000));
         });
 
-        model.getFinalTime().observe(this,e->{
-            if(e!=0) startTimer(e);
-        });
+        timer=new Timer();
+        model.setTimer(timer);
+
+        startTimer(model.getFinalTime());
         shaker=new Shaker(activity, ()->{
             if(model.isPaid()){
                 ((MyApplication)activity.getApplication()).getExecutorService().execute(()->{
@@ -111,9 +113,7 @@ public class TableFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         amb=FragmentTableBinding.inflate(inflater,container,false);
-//        TypedArray images=getResources().obtainTypedArray(R.array.ids);
 
-        timer=new Timer();
 
         getViewLifecycleOwner().getLifecycle().addObserver(shaker);
         getViewLifecycleOwner().getLifecycle().addObserver(soundActivator);
@@ -132,22 +132,7 @@ public class TableFragment extends Fragment {
                 });
         });
         amb.board.setOnTouchListener(amb.board.listener);
-//        for(int i=0;i<images.length();i++){
-//            int id=images.getResourceId(i,0);
-//            int index=i;
-//            int start=R.id.start;
-//
-//            amb.getRoot().findViewById(id).setOnClickListener(e->{
-//                propertyModel.getProperty(index).observe(getViewLifecycleOwner(),k->{
-//                    ((MyApplication)activity.getApplication()).getExecutorService().execute(()-> {
-//                        Player p=model.getPlayer(model.getLastPlayer());
-//                        if(p.getPosition()!=index) model.setAbleToBuy(false);
-//                        else model.setAbleToBuy(true);
-//                        mainHanfler.post(()->RouterUtility.route(controller,k, model.getLastPlayer()));
-//                    });
-//                });
-//            });
-//        }
+
 
         if(model.isMoved()){
             model.setMoved(false);
@@ -165,9 +150,6 @@ public class TableFragment extends Fragment {
         String[]colors=getResources().getStringArray(R.array.colors);
 
         model.getPlayers().observe(getViewLifecycleOwner(),e->{
-//            TypedArray img=getResources().obtainTypedArray(R.array.ids);
-//            ImageView k=((ImageView)amb.getRoot().findViewById(img.getResourceId(model.getOldPossition(),0)));
-//            k.clearColorFilter();
             amb.board.clearFilter(model.getOldPossition());
             amb.board.invalidate();
             ((MyApplication)activity.getApplication()).getExecutorService().execute(()->{
@@ -178,13 +160,9 @@ public class TableFragment extends Fragment {
                         mainHanfler.post(()->{
                             amb.board.useFilter(e.get(index).getPosition(),index);
                             amb.board.invalidate();
-//                            ((ImageView)amb.getRoot().findViewById(img.getResourceId(e.get(index).getPosition(),0))).setColorFilter(Color.parseColor(colors[index]),
-//                                    PorterDuff.Mode.MULTIPLY);
                         });
-
-
                 }
-//                mainHanfler.post(()-> img.recycle());
+//
             });
 
 
@@ -215,6 +193,11 @@ public class TableFragment extends Fragment {
             return true;
         });
 //        images.recycle();
+        amb.topAppBar.setNavigationOnClickListener(e->{
+            timer.cancel();
+            controller.popBackStack();
+            controller.navigateUp();
+        });
         return amb.getRoot();
     }
 
@@ -239,16 +222,22 @@ public class TableFragment extends Fragment {
                 int hours = (int) ((elapsed / (1000 * 60 * 60)) % 24);
 
                 if(minutes==0 && hours==0){
-                    timer.cancel();
+//                    timer.cancel(); vec uradjeno u finish
                     String winner=getWinner();
-                    handler.post(()->new MaterialAlertDialogBuilder(activity)
-                            .setTitle("Igra je zavrsena!")
-                            .setMessage("Pobednik je: "+winner)
-                            .setNeutralButton((CharSequence) "Cancel", (dialog, which) -> {
-                                dialog.cancel();
-                                NavDirections d=TableFragmentDirections.newGame();
-                                controller.navigate(d);
-                            }).show());
+                    model.finishGame();
+                    handler.post(()->{
+                        AlertDialog dd=new MaterialAlertDialogBuilder(activity)
+                                .setTitle("Igra je zavrsena!")
+                                .setMessage("Pobednik je: "+winner)
+                                .setNeutralButton((CharSequence) "Cancel", (dialog, which) -> {
+                                    dialog.cancel();
+                                    NavDirections d=TableFragmentDirections.newGame();
+                                    controller.navigate(d);
+                                }).create();
+                        dd.setCanceledOnTouchOutside(false);
+                        dd.show();
+
+                    });
                 }
                 StringBuilder time = new StringBuilder();
                 time.append(String.format("%02d", hours)).append(":");
@@ -260,24 +249,12 @@ public class TableFragment extends Fragment {
 
     }
 
-    private int calculateWorth(Player p){
-        if(p.getMoney()==-1) return -1;
-        int worth= p.getMoney();
-        List<Property> properties=propertyModel.getOfHolder(p.getIndex());
-        for(Property prop:properties){
-            worth+=prop.getProperty_price();
-            if(prop.getType()==0){
-                worth+=prop.getBuilding_price()*prop.getHouses();
-            }
-        }
-        return worth;
-    }
 
     private String getWinner(){
         List<Player> players=model.getAllPlayers();
-        Player p=players.stream().max(Comparator.comparingInt(this::calculateWorth)).get();
+        Player p=players.stream().max(Comparator.comparingInt(p2 -> model.calculateWorth(p2))).get();
         List<Player> maxs=players.stream().filter(e->{
-            return calculateWorth(e)==calculateWorth(p);
+            return model.calculateWorth(e)== model.calculateWorth(p);
         }).collect(Collectors.toList());
         String ret="";
         for(Player maxp:maxs){

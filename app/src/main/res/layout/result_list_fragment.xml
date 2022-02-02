@@ -4,13 +4,31 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ResultListFragment">
-
-    <rs.ac.bg.etf.monopoly.BoardView
-        android:id="@+id/board"
+    tools:context=".ResultListFragment"
+    android:background="@drawable/backgound">
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_constraintDimensionRatio="1:1"
-        />
+        android:orientation="vertical">
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/topAppBar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:title="Lista odigranih igara"
+            app:navigationIcon="@drawable/outline_arrow_back_24"
+            style="@style/Widget.MaterialComponents.Toolbar.Surface"
+            android:backgroundTint="#59372D"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:listitem="@layout/result_holder"
+            />
+
+    </LinearLayout>
+
 
 </FrameLayout>

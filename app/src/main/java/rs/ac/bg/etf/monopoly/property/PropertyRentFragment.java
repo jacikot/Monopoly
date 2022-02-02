@@ -7,6 +7,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
@@ -145,14 +146,19 @@ public class PropertyRentFragment extends Fragment {
                             Player winner=players.stream().filter(pp->{
                                 return pp.getMoney()!=-1;
                             }).findFirst().orElse(null);
-                            h.post(()->new MaterialAlertDialogBuilder(activity)
-                                    .setTitle("Igra je zavrsena!")
-                                    .setMessage("Pobednik je "+winner.getName())
-                                    .setPositiveButton((CharSequence) "Return to home", (dialog, which) -> {
-                                        dialog.cancel();
-                                        controller.popBackStack();
-                                        controller.navigateUp();
-                                    }).show());
+                            model.finishGame();
+                            h.post(()-> {
+                                AlertDialog dd=new MaterialAlertDialogBuilder(activity)
+                                        .setTitle("Igra je zavrsena!")
+                                        .setMessage("Pobednik je "+winner.getName())
+                                        .setPositiveButton((CharSequence) "Return to home", (dialog, which) -> {
+                                            dialog.cancel();
+                                            controller.popBackStack();
+                                            controller.navigateUp();
+                                        }).create();
+                                dd.setCanceledOnTouchOutside(false);
+                                dd.show();
+                            });
                         }
                         else h.post(()->controller.navigateUp());
 

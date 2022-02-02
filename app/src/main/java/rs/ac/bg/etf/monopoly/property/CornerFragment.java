@@ -95,11 +95,13 @@ public class CornerFragment extends Fragment {
     private void gotoPrison(int user) {
         ((MyApplication)activity.getApplication()).getExecutorService().execute(()->{
             Player p= model.getPlayer(user);
+
             if(p.getPrison()<0){
                 p.setPrison(p.getPrison()+1);
                 h.post(()->Toast.makeText(activity,"Ne morate u zatvor imae besplatnu kartu!",Toast.LENGTH_SHORT).show());
             }
             else{
+                model.setOldPossition(p.getPosition());
                 p.setPrison(2);
                 p.setPosition(10);
 

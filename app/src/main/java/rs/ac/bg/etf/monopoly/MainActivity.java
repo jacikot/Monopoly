@@ -2,6 +2,7 @@ package rs.ac.bg.etf.monopoly;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import rs.ac.bg.etf.monopoly.databinding.ActivityMainBinding;
@@ -13,6 +14,8 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding amb;
 
     private DBMonopoly database;
+    private GameModel model;
+    private static final String shared_NAME="locals";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,5 +30,7 @@ public class MainActivity extends AppCompatActivity {
                 repo.insertCards();
             }
         });
+        model=GameModel.getModel(repo,this);
+        model.setSharedPrefs(getSharedPreferences(shared_NAME, Context.MODE_PRIVATE));
     }
 }

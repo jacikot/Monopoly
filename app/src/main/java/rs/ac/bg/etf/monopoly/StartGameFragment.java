@@ -84,7 +84,7 @@ public class StartGameFragment extends Fragment {
 
                                 return;
                             }
-                            Player p=new Player(index, model.getCurrentGame(), newPlayer,1500,0,0);
+                            Player p=new Player(index, model.getCurrentGame(), newPlayer,1500,0,0,-1);
                             model.insertPlayer(p);
                             d.cancel();
                         });

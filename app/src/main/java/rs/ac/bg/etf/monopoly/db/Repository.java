@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Future;
 
@@ -31,7 +32,23 @@ public class Repository {
         this.activity=activity;
     }
 
+    public int startGame(){
+        game.unfinished();
+        game.insertGame(new Game(1));
+        return game.getCurrentGameId();
+    }
 
+    public void finishCurrentGame(){
+        game.finish(new Date().getTime());
+    }
+
+    public List<Game> getAllFinishedGames(){
+        return game.getAllFinishedGames();
+    }
+
+    public List<Player> getAllGamePlayers(){
+        return player.getAllGamePlayers();
+    }
 
     public void insert(Property p){
         property.insert(p);
