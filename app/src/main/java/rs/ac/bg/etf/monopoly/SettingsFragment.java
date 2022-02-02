@@ -40,6 +40,9 @@ public class SettingsFragment extends Fragment {
     public static final String SENSITIVITY_KEY="sensitivity";
     public static final String DIALOG_KEY="dialog";
     public static final String DIALOG_PRESSED_KEY="dialog-pressed";
+    public static final String PLAYER_KEY="players";
+    public static final String TIME_KEY="duration";
+    public static final String TIME_UPDATED="duration-update";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -67,15 +70,30 @@ public class SettingsFragment extends Fragment {
             controller.navigateUp();
         });
 
+        String[]players=getResources().getStringArray(R.array.players);
+        amb.playerSpinner.setAdapter(new ArrayAdapter<String>(activity,android.R.layout.simple_spinner_dropdown_item,players));
+
+        String[]durations=getResources().getStringArray(R.array.time);
+        amb.timeSpinner.setAdapter(new ArrayAdapter<String>(activity,android.R.layout.simple_spinner_dropdown_item,durations));
+
+
+
         amb.update.setOnClickListener(e->{
             int sensPos=amb.shakingSpinner.getSelectedItemPosition();
             boolean dialogEnabled=amb.dialogSpinner.getSelectedItemPosition()==0;
+            int playerPos=amb.playerSpinner.getSelectedItemPosition();
+            int timePos=amb.timeSpinner.getSelectedItemPosition();
             TypedArray sensValues=getResources().obtainTypedArray(R.array.sensitivity_values);
+            TypedArray playerValues=getResources().obtainTypedArray(R.array.players_values);
+            TypedArray timeValues=getResources().obtainTypedArray(R.array.time_values);
             SharedPreferences preferences=model.getSePreferences();
             preferences.edit()
                     .putInt(SENSITIVITY_KEY,sensValues.getInt(sensPos,10000))
                     .putBoolean(DIALOG_KEY,dialogEnabled)
                     .putBoolean(DIALOG_PRESSED_KEY,false)
+                    .putInt(PLAYER_KEY,playerValues.getInt(playerPos,8))
+                    .putInt(TIME_KEY,timeValues.getInt(timePos,2))
+                    .putBoolean(TIME_UPDATED,true)
                     .commit();
             controller.navigateUp();
         });

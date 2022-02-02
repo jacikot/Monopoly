@@ -46,6 +46,9 @@
         <action
             android:id="@+id/corner"
             app:destination="@id/cornerFragment" />
+        <action
+            android:id="@+id/action_tableFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
     </fragment>
     <fragment
         android:id="@+id/propertyDetailsFragment"

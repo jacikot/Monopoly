@@ -73,11 +73,12 @@ public class StartGameFragment extends Fragment {
                     .setView(infl)
                     .setPositiveButton("Dodaj",(d,w)->{
                         String newPlayer=((EditText)infl.findViewById(R.id.name)).getText().toString();
+                        int maxPlayers=model.getSePreferences().getInt(SettingsFragment.PLAYER_KEY,8);
                         ((MyApplication)activity.getApplication()).getExecutorService().execute(()->{
                             int index=model.getAllPlayers().size();
-                            if(index==8){
+                            if(index==maxPlayers){
                                 h.post(()->{
-                                    Toast.makeText(activity,"Nije moguce dodati vise od 8 igraca",Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(activity,"Nije moguce dodati vise od "+maxPlayers+" igraca",Toast.LENGTH_SHORT).show();
                                 });
 
                                 d.cancel();

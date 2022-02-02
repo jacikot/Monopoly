@@ -21,7 +21,7 @@ public class Shaker implements DefaultLifecycleObserver {
 
     private SensorManager manager;
     private long lastUpdate;
-    private final int SHAKE_TRESHOLD;
+    private int SHAKE_TRESHOLD;
     private float lastAxis[]=new float[3];
     private MainActivity context;
     private boolean active=false;
@@ -61,6 +61,7 @@ public class Shaker implements DefaultLifecycleObserver {
                 lastAxis[1] = y;
                 lastAxis[2] = z;
                 Log.d("accel",""+x+" "+y+" "+z+" "+speed+" "+Math.sqrt(x*x+y*y+z*z)+" "+Math.sqrt(x*x+y*y+z*z));
+                SHAKE_TRESHOLD=preferences.getInt(SettingsFragment.SENSITIVITY_KEY,SHAKE_TRESHOLD);
                 if(speed>SHAKE_TRESHOLD && !shakingDetected){
                     if(preferences.getBoolean(SettingsFragment.DIALOG_KEY,false)
                             && !preferences.getBoolean(SettingsFragment.DIALOG_PRESSED_KEY,false)){

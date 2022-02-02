@@ -56,7 +56,7 @@ public class TableFragment extends Fragment {
     private Handler mainHanfler=new Handler(Looper.getMainLooper());
     private Shaker shaker;
     private SoundActivator soundActivator;
-    private long gameDuration=60*2;
+
 
 
     public TableFragment() {
@@ -82,8 +82,8 @@ public class TableFragment extends Fragment {
 
         timer=new Timer();
         model.setTimer(timer);
-        model.setFinalTime(new Date().getTime()+gameDuration*1000);
-        startTimer(model.getFinalTime());
+        model.setFinalTime(new Date().getTime()+model.getSePreferences().getInt(SettingsFragment.TIME_KEY,2)*60*1000);
+        startTimer();
         callbackEnd=()->{
             if(model.isPaid()){
                 ((MyApplication)activity.getApplication()).getExecutorService().execute(()->{
@@ -123,6 +123,19 @@ public class TableFragment extends Fragment {
         getViewLifecycleOwner().getLifecycle().addObserver(shaker);
         getViewLifecycleOwner().getLifecycle().addObserver(soundActivator);
 
+        if(model.getSePreferences().getBoolean(SettingsFragment.TIME_UPDATED,false)){
+            model.getSePreferences().edit().putBoolean(SettingsFragment.TIME_UPDATED,false);
+            model.setFinalTime(new Date().getTime()+model.getSePreferences().getInt(SettingsFragment.TIME_KEY,2)*60*1000);
+            long elapsed = model.getFinalTime()-new Date().getTime();
+
+            int minutes = (int) ((elapsed / (1000 * 60)) % 60);
+            int hours = (int) ((elapsed / (1000 * 60 * 60)) % 24);
+            StringBuilder time = new StringBuilder();
+            time.append(String.format("%02d", hours)).append(":");
+            time.append(String.format("%02d", minutes));
+
+            model.setTimeString(time.toString());
+        }
         model.getTimeString().observe(getViewLifecycleOwner(),e->{
             amb.timer.setText(e);
         });
@@ -208,6 +221,11 @@ public class TableFragment extends Fragment {
             });
             return true;
         });
+        amb.topAppBar.getMenu().getItem(2).setOnMenuItemClickListener(e-> {
+            NavDirections dir=TableFragmentDirections.actionTableFragmentToSettingsFragment();
+            controller.navigate(dir);
+            return true;
+        });
 //        images.recycle();
         amb.topAppBar.setNavigationOnClickListener(e->{
             timer.cancel();
@@ -227,14 +245,14 @@ public class TableFragment extends Fragment {
 
 
 
-    private void startTimer(long finalTime) {
+    private void startTimer() {
 
         Handler handler = new Handler(Looper.getMainLooper());
 
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                long elapsed = finalTime-new Date().getTime();
+                long elapsed = model.getFinalTime()-new Date().getTime();
 
                 int minutes = (int) ((elapsed / (1000 * 60)) % 60);
                 int hours = (int) ((elapsed / (1000 * 60 * 60)) % 24);

@@ -1,20 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="sensitivity">
-        <item>Jako osetljivo</item>
-        <item>Srednje osetljivo</item>
-        <item>Slabo osetljivo</item>
-        <item>Onemoguci</item>
+        <item>jako osetljivo</item>
+        <item>srednje osetljivo</item>
+        <item>slabo osetljivo</item>
+        <item>onemoguci</item>
     </string-array>
     <array name="sensitivity_values">
-        <item>100</item>
-        <item>200</item>
-        <item>400</item>
+        <item>80</item>
+        <item>300</item>
+        <item>600</item>
         <item>10000</item>
     </array>
     <string-array name="dialog">
         <item>dozvoli</item>
         <item>ne dozvoli</item>
+    </string-array>
+
+    <array name="players_values">
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+    </array>
+    <string-array name="players">
+        <item>dva</item>
+        <item>tri</item>
+        <item>cetiri</item>
+        <item>pet</item>
+        <item>sest</item>
+        <item>sedam</item>
+        <item>osam</item>
+    </string-array>
+    <array name="time_values">
+        <item>2</item>
+        <item>30</item>
+        <item>60</item>
+        <item>120</item>
+        <item>300</item>
+        <item>720</item>
+    </array>
+    <string-array name="time">
+        <item>2 min</item>
+        <item>30 min</item>
+        <item>1 h</item>
+        <item>2 h</item>
+        <item>5 h</item>
+        <item>12 h</item>
     </string-array>
     
 </resources>

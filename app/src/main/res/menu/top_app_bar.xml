@@ -10,6 +10,10 @@
         android:icon="@drawable/outline_paid_24"
         app:showAsAction="always" />
 
+    <item android:title="settings"
+        android:icon="@drawable/outline_settings_24"
+        app:showAsAction="always" />
+
 
 
 

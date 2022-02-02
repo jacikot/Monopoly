@@ -39,9 +39,13 @@ public class MainActivity extends AppCompatActivity {
                     .putInt(SettingsFragment.SENSITIVITY_KEY,200)
                     .putBoolean(SettingsFragment.DIALOG_KEY,false)
                     .putBoolean(SettingsFragment.DIALOG_PRESSED_KEY,false)
+                    .putInt(SettingsFragment.PLAYER_KEY,8)
+                    .putInt(SettingsFragment.TIME_KEY,2)
+                    .putBoolean(SettingsFragment.TIME_UPDATED,true)
                     .commit();
         else preferences.edit()
                 .putBoolean(SettingsFragment.DIALOG_PRESSED_KEY,false)
+                .putBoolean(SettingsFragment.TIME_UPDATED,true)
                 .commit();
     }
 }
