@@ -56,7 +56,9 @@ public class PropertyRentFragment extends Fragment {
         super.onCreate(savedInstanceState);
         activity= (MainActivity) requireActivity();
         DBMonopoly db=DBMonopoly.getInstance(activity);
-        repo=new Repository(activity,db.getDaoProperty(), db.getDaoPlayer(), db.getDaoCard(),db.getDaoGame());
+        repo= new Repository(activity,db.getDaoProperty(),
+                db.getDaoPlayer(), db.getDaoCard(),
+                db.getDaoGame(),db.getDaoMove(),db.getSellingDao());
         model= GameModel.getModel(repo,activity);
         propertyModel=PropertyModel.getModel(repo,activity);
     }

@@ -23,12 +23,22 @@ public class Repository {
     private CardDAO card;
     private MainActivity activity;
     private GameDAO game;
+    private MoveDao move;
+    private SellingDao selling;
 
-    public Repository(MainActivity activity, PropertyDAO dao, PlayerDAO dao2, CardDAO cards, GameDAO games){
+    public Repository(MainActivity activity,
+                      PropertyDAO dao,
+                      PlayerDAO dao2,
+                      CardDAO cards,
+                      GameDAO games,
+                      MoveDao moves,
+                      SellingDao sellings){
         property=dao;
         player=dao2;
         card=cards;
         game=games;
+        move=moves;
+        selling=sellings;
         this.activity=activity;
     }
 

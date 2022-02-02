@@ -14,7 +14,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding amb;
 
-    private DBMonopoly database;
+    private DBMonopoly db;
     private GameModel model;
     public static final String shared_NAME="locals";
 
@@ -23,8 +23,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         amb=ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(amb.getRoot());
-        database=DBMonopoly.getInstance(this);
-        Repository repo=new Repository(this,database.getDaoProperty(),database.getDaoPlayer(),database.getDaoCard(),database.getDaoGame());
+        db=DBMonopoly.getInstance(this);
+        Repository repo= new Repository(this,db.getDaoProperty(),
+                db.getDaoPlayer(), db.getDaoCard(),
+                db.getDaoGame(),db.getDaoMove(),db.getSellingDao());
         repo.getProperty(0).observe(this,e->{
             if(e==null){
                 repo.initProperties(true);

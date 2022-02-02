@@ -73,7 +73,10 @@ public class TableFragment extends Fragment {
         activity= (MainActivity) requireActivity();
         soundActivator=new SoundActivator();
         DBMonopoly db=DBMonopoly.getInstance(activity);
-        Repository repo=new Repository(activity,db.getDaoProperty(),db.getDaoPlayer(), db.getDaoCard(), db.getDaoGame());
+        Repository repo=
+                new Repository(activity,db.getDaoProperty(),
+                        db.getDaoPlayer(), db.getDaoCard(),
+                        db.getDaoGame(),db.getDaoMove(),db.getSellingDao());
         propertyModel=PropertyModel.getModel(repo, activity);
         model=GameModel.getModel(repo,activity);
         ((MyApplication)activity.getApplication()).getExecutorService().execute(()->{

@@ -39,7 +39,9 @@ public class HomeFragment extends Fragment {
         super.onCreate(savedInstanceState);
         activity= (MainActivity) requireActivity();
         DBMonopoly db=DBMonopoly.getInstance(activity);
-        Repository repo=new Repository(activity,db.getDaoProperty(),db.getDaoPlayer(), db.getDaoCard(),db.getDaoGame());
+        Repository repo= new Repository(activity,db.getDaoProperty(),
+                db.getDaoPlayer(), db.getDaoCard(),
+                db.getDaoGame(),db.getDaoMove(),db.getSellingDao());
         model= GameModel.getModel(repo,activity);
     }
 
