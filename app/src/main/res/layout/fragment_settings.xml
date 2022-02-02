@@ -71,7 +71,7 @@
                     app:layout_constraintLeft_toLeftOf="parent"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Otvaranje dijaloga pri muckanju:"
+                    android:text="Otvaranje dijaloga:"
                     android:textSize="16sp"
                     android:textColor="@color/brown"
                     android:layout_marginRight="10dp"
@@ -100,7 +100,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="16sp"
-                    android:text="Vreme igranja partije (min):"
+                    android:text="Trajanje partije:"
                     android:textColor="@color/brown"
                     android:layout_marginRight="10dp"
                     />
@@ -130,7 +130,7 @@
                     android:layout_height="wrap_content"
                     android:textSize="16sp"
                     android:textColor="@color/brown"
-                    android:text="Maksimalni broj igraca:"
+                    android:text="Maksimalno igraca:"
                     android:layout_marginRight="10dp"
                     />
 

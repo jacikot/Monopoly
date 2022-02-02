@@ -35,6 +35,13 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences preferences=getSharedPreferences(shared_NAME, Context.MODE_PRIVATE);
         model.setSharedPrefs(preferences);
         if(!preferences.contains(SettingsFragment.SENSITIVITY_KEY))
-            preferences.edit().putInt(SettingsFragment.SENSITIVITY_KEY,200).commit();
+            preferences.edit()
+                    .putInt(SettingsFragment.SENSITIVITY_KEY,200)
+                    .putBoolean(SettingsFragment.DIALOG_KEY,false)
+                    .putBoolean(SettingsFragment.DIALOG_PRESSED_KEY,false)
+                    .commit();
+        else preferences.edit()
+                .putBoolean(SettingsFragment.DIALOG_PRESSED_KEY,false)
+                .commit();
     }
 }

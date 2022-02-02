@@ -1,5 +1,6 @@
 package rs.ac.bg.etf.monopoly;
 
+import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.os.Bundle;
 
@@ -37,6 +38,8 @@ public class SettingsFragment extends Fragment {
     NavController controller;
 
     public static final String SENSITIVITY_KEY="sensitivity";
+    public static final String DIALOG_KEY="dialog";
+    public static final String DIALOG_PRESSED_KEY="dialog-pressed";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -55,14 +58,25 @@ public class SettingsFragment extends Fragment {
         amb=FragmentSettingsBinding.inflate(inflater,container,false);
         String[]sensitivity=getResources().getStringArray(R.array.sensitivity);
         amb.shakingSpinner.setAdapter(new ArrayAdapter<String>(activity,android.R.layout.simple_spinner_dropdown_item,sensitivity));
-        amb.update.setOnClickListener(e->{
-            int sensPos=amb.shakingSpinner.getSelectedItemPosition();
-            TypedArray sensValues=getResources().obtainTypedArray(R.array.sensitivity_values);
-            model.getSePreferences().edit().putInt(SENSITIVITY_KEY,sensValues.getInt(sensPos,10000)).commit();
+
+
+        String[]dialog=getResources().getStringArray(R.array.dialog);
+        amb.dialogSpinner.setAdapter(new ArrayAdapter<String>(activity,android.R.layout.simple_spinner_dropdown_item,dialog));
+
+        amb.topAppBar.setNavigationOnClickListener(e->{
             controller.navigateUp();
         });
 
-        amb.topAppBar.setNavigationOnClickListener(e->{
+        amb.update.setOnClickListener(e->{
+            int sensPos=amb.shakingSpinner.getSelectedItemPosition();
+            boolean dialogEnabled=amb.dialogSpinner.getSelectedItemPosition()==0;
+            TypedArray sensValues=getResources().obtainTypedArray(R.array.sensitivity_values);
+            SharedPreferences preferences=model.getSePreferences();
+            preferences.edit()
+                    .putInt(SENSITIVITY_KEY,sensValues.getInt(sensPos,10000))
+                    .putBoolean(DIALOG_KEY,dialogEnabled)
+                    .putBoolean(DIALOG_PRESSED_KEY,false)
+                    .commit();
             controller.navigateUp();
         });
 

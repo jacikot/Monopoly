@@ -10,9 +10,12 @@ import android.os.SystemClock;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.DefaultLifecycleObserver;
 import androidx.lifecycle.LifecycleOwner;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 public class Shaker implements DefaultLifecycleObserver {
 
@@ -24,6 +27,7 @@ public class Shaker implements DefaultLifecycleObserver {
     private boolean active=false;
     private Callback start;
     private Callback end;
+    private boolean opened=false;
 
     private boolean shakingDetected;
 
@@ -58,6 +62,14 @@ public class Shaker implements DefaultLifecycleObserver {
                 lastAxis[2] = z;
                 Log.d("accel",""+x+" "+y+" "+z+" "+speed+" "+Math.sqrt(x*x+y*y+z*z)+" "+Math.sqrt(x*x+y*y+z*z));
                 if(speed>SHAKE_TRESHOLD && !shakingDetected){
+                    if(preferences.getBoolean(SettingsFragment.DIALOG_KEY,false)
+                            && !preferences.getBoolean(SettingsFragment.DIALOG_PRESSED_KEY,false)){
+                        if(!opened){
+                            opened=true;
+                            showDialog();
+                        }
+                        return;
+                    }
                     shakingDetected=true;
                     start.call();
 
@@ -73,6 +85,20 @@ public class Shaker implements DefaultLifecycleObserver {
         public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
         }
+    }
+
+    private void showDialog(){
+        AlertDialog dd=new MaterialAlertDialogBuilder(context)
+                .setTitle("Da li ste spremni za bacanje kockica?")
+                .setPositiveButton((CharSequence) "Potvrdi",(dialog, which) -> {
+                    preferences.edit().putBoolean(SettingsFragment.DIALOG_PRESSED_KEY,true).commit();
+                    dialog.cancel();
+                    opened=false;
+
+                })
+                .create();
+        dd.setCanceledOnTouchOutside(false);
+        dd.show();
     }
 
     @Override

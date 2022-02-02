@@ -93,6 +93,7 @@ public class TableFragment extends Fragment {
                     SystemClock.sleep(4000);
                     mainHanfler.post(()->{
                         RouterUtility.route(controller ,property, model.getLastPlayer());
+                        model.getSePreferences().edit().putBoolean(SettingsFragment.DIALOG_PRESSED_KEY,false).commit();
                     });
 
                 });
@@ -222,6 +223,8 @@ public class TableFragment extends Fragment {
         controller= Navigation.findNavController(view);
 
     }
+
+
 
 
     private void startTimer(long finalTime) {

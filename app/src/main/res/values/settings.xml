@@ -12,5 +12,9 @@
         <item>400</item>
         <item>10000</item>
     </array>
+    <string-array name="dialog">
+        <item>dozvoli</item>
+        <item>ne dozvoli</item>
+    </string-array>
     
 </resources>
