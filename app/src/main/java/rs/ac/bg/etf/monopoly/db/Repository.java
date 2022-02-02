@@ -42,6 +42,13 @@ public class Repository {
         this.activity=activity;
     }
 
+    public void insertMove(Move m){
+        move.insertMove(m);
+        m.getList().forEach(s->{
+            selling.insert(s);
+        });
+    }
+
     public int startGame(){
         game.unfinished();
         game.insertGame(new Game(1));
@@ -63,6 +70,8 @@ public class Repository {
     public void deleteAllGames(){
         player.deleteAll();
         game.deleteAll();
+        move.deleteAll();
+        selling.deleteAll();
     }
 
     public void insert(Property p){

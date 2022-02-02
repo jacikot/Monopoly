@@ -1,7 +1,11 @@
 package rs.ac.bg.etf.monopoly.db;
 
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Move {
@@ -14,6 +18,23 @@ public class Move {
     int buyAction;
     int cardOpen;
 
+    @Ignore
+    List<Selling> list=new ArrayList<>();
+
+    @Ignore
+    public void addSelling(Selling s){
+        list.add(s);
+    }
+
+    @Ignore
+    public List<Selling> getList() {
+        return list;
+    }
+
+    @Ignore
+    public Move(){
+
+    }
     public Move(int idMove, int game, int player, int positionTo, int buyAction, int cardOpen) {
         this.idMove = idMove;
         this.game = game;

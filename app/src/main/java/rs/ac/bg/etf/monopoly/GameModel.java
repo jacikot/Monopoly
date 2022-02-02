@@ -22,6 +22,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import rs.ac.bg.etf.monopoly.db.Card;
 import rs.ac.bg.etf.monopoly.db.Game;
+import rs.ac.bg.etf.monopoly.db.Move;
 import rs.ac.bg.etf.monopoly.db.Player;
 import rs.ac.bg.etf.monopoly.db.Property;
 import rs.ac.bg.etf.monopoly.db.Repository;
@@ -32,6 +33,9 @@ public class GameModel extends ViewModel {
     private static final String  KEY_USER="currentUser";
     private static final String  KEY_DICE="dice";
     private static final String KEY_TIME="time";
+
+    private Move currentMove;
+    private List<Move>moves;
 
     private int currentUser;
     private int lastPlayed=0;
@@ -48,6 +52,23 @@ public class GameModel extends ViewModel {
     private boolean paid=true;
     private boolean moved;
     private int moneyFromTaxes;
+
+
+    public Move getCurrentMove() {
+        return currentMove;
+    }
+
+    public void setCurrentMove(Move currentMove) {
+        this.currentMove = currentMove;
+    }
+
+    public List<Move> getMoves() {
+        return moves;
+    }
+
+    public void setMoves(List<Move> moves) {
+        this.moves = moves;
+    }
 
     public Timer getTimer() {
         return timer;
@@ -188,6 +209,12 @@ public class GameModel extends ViewModel {
             p.setEvaluation(calculateWorth(p));
             repo.updatePlayer(p);
         });
+        if(currentMove!=null){
+            moves.add(currentMove);
+        }
+        moves.forEach(m->{
+            repo.insertMove(m);
+        });
         if(timer!=null) timer.cancel();
     }
 
@@ -207,6 +234,7 @@ public class GameModel extends ViewModel {
         ableToBuy=false;
         bought=false;
         paid=true;
+        moves=new ArrayList<>();
     }
 
     public void deleteAll(){
@@ -237,6 +265,10 @@ public class GameModel extends ViewModel {
     public Player rollTheDice(LifecycleOwner o){
         bought=false;
         cardOpen.postValue(null);
+        if(currentMove!=null){
+            moves.add(currentMove);
+        }
+        currentMove=new Move();
         int dice1=((int)(Math.random()*6))+1;
         int dice2=((int)(Math.random()*6))+1;
 
@@ -253,16 +285,19 @@ public class GameModel extends ViewModel {
                 attempts=0;
                 if(e.get().getMoney()!=-1) e.get().setPrison(e.get().getPrison()-1);
                 currentUser=(currentUser+1)%playerCnt;
+                currentMove.setPlayer(currentUser);
             }
             else{
                 oldPossition=e.get().getPosition();
                 e.get().setPosition((oldPossition+dice1+dice2)%40);
+                currentMove.setPositionTo(e.get().getPosition());
                 if(oldPossition>(oldPossition+dice1+dice2)%40){
                     e.get().setMoney(e.get().getMoney()+200);
                 }
                 attempts++;
                 if(dice1!=dice2){
                     currentUser=(currentUser+1)%playerCnt;
+                    currentMove.setPlayer(currentUser);
                     attempts=0;
                 }
                 else if(attempts>2){
@@ -274,6 +309,7 @@ public class GameModel extends ViewModel {
                         e.get().setPosition(10); //zatvor
                     }
                     currentUser=(currentUser+1)%playerCnt;
+                    currentMove.setPlayer(currentUser);
                     attempts=0;
                 }
                 finish.set(true);
@@ -309,18 +345,10 @@ public class GameModel extends ViewModel {
     }
 
 
-
-    public int getCurrentUser() {
-        return currentUser;
-    }
-
     public int getLastPlayer() {
         return lastPlayed;
     }
 
-    public void setCurrentUser(int currentUser) {
-        this.currentUser=currentUser;
-    }
 
     public void setRepo(Repository repo) {
         this.repo = repo;

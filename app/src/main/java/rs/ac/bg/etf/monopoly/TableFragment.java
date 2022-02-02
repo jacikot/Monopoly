@@ -127,7 +127,7 @@ public class TableFragment extends Fragment {
         getViewLifecycleOwner().getLifecycle().addObserver(soundActivator);
 
         if(model.getSePreferences().getBoolean(SettingsFragment.TIME_UPDATED,false)){
-            model.getSePreferences().edit().putBoolean(SettingsFragment.TIME_UPDATED,false);
+            model.getSePreferences().edit().putBoolean(SettingsFragment.TIME_UPDATED,false).commit();
             model.setFinalTime(new Date().getTime()+model.getSePreferences().getInt(SettingsFragment.TIME_KEY,2)*60*1000);
             long elapsed = model.getFinalTime()-new Date().getTime();
 
