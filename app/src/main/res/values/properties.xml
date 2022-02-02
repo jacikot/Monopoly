@@ -1,47 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <array name="ids">
-        <item>@id/start</item>
-        <item>@id/ustanicka</item>
-        <item>@id/blagajna1</item>
-        <item>@id/vojislav</item>
-        <item>@id/porez_plata</item>
-        <item>@id/glavna_stanica</item>
-        <item>@id/savski</item>
-        <item>@id/sansa1</item>
-        <item>@id/heroji</item>
-        <item>@id/arena</item>
-        <item>@id/zatvor_p</item>
-        <item>@id/sajam</item>
-        <item>@id/eps</item>
-        <item>@id/misic</item>
-        <item>@id/ada</item>
-        <item>@id/novi_stanica</item>
-        <item>@id/bulevar</item>
-        <item>@id/blagajna2</item>
-        <item>@id/takovska</item>
-        <item>@id/cvijiceva</item>
-        <item>@id/parking</item>
-        <item>@id/sava_centar</item>
-        <item>@id/sansa2</item>
-        <item>@id/fontana</item>
-        <item>@id/gardos</item>
-        <item>@id/vuk</item>
-        <item>@id/terazije</item>
-        <item>@id/kalemegdan</item>
-        <item>@id/vodovod</item>
-        <item>@id/studentski</item>
-        <item>@id/policija</item>
-        <item>@id/mir</item>
-        <item>@id/svetosavska</item>
-        <item>@id/blagajna3</item>
-        <item>@id/slavija</item>
-        <item>@id/aerodrom</item>
-        <item>@id/sansa3</item>
-        <item>@id/knez</item>
-        <item>@id/porez_luksuz</item>
-        <item>@id/vladari</item>
-    </array>
+
     <array name="images">
 
         <item>@drawable/start</item>

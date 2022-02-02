@@ -39,7 +39,7 @@ public class HomeFragment extends Fragment {
         super.onCreate(savedInstanceState);
         activity= (MainActivity) requireActivity();
         DBMonopoly db=DBMonopoly.getInstance(activity);
-        Repository repo=new Repository(activity,db.getDaoProperty(),db.getDaoPlayer(), db.getDaoCard());
+        Repository repo=new Repository(activity,db.getDaoProperty(),db.getDaoPlayer(), db.getDaoCard(),db.getDaoGame());
         model= GameModel.getModel(repo,activity);
     }
 
@@ -61,7 +61,7 @@ public class HomeFragment extends Fragment {
 
         });
         amb.results.setOnClickListener(e->{
-            NavDirections dir=HomeFragmentDirections.actionHomeFragmentToBlankFragment();
+            NavDirections dir=HomeFragmentDirections.actionShowList();
             controller.navigate(dir);
         });
         return amb.getRoot();

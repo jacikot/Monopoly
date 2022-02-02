@@ -50,7 +50,7 @@ public class PropertyPayFragment extends Fragment {
         super.onCreate(savedInstanceState);
         activity= (MainActivity) requireActivity();
         DBMonopoly db=DBMonopoly.getInstance(activity);
-        repo=new Repository(activity,db.getDaoProperty(), db.getDaoPlayer(), db.getDaoCard());
+        repo=new Repository(activity,db.getDaoProperty(), db.getDaoPlayer(), db.getDaoCard(),db.getDaoGame());
         model= GameModel.getModel(repo,activity);
         propertyModel=PropertyModel.getModel(repo,activity);
     }

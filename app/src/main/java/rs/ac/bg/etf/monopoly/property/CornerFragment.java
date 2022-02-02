@@ -49,7 +49,7 @@ public class CornerFragment extends Fragment {
         super.onCreate(savedInstanceState);
         activity= (MainActivity) requireActivity();
         DBMonopoly db=DBMonopoly.getInstance(activity);
-        repo=new Repository(activity,db.getDaoProperty(), db.getDaoPlayer(), db.getDaoCard());
+        repo=new Repository(activity,db.getDaoProperty(), db.getDaoPlayer(), db.getDaoCard(),db.getDaoGame());
         model= new ViewModelProvider(activity).get(GameModel.class);
     }
 

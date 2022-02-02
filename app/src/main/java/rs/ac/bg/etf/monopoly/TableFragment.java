@@ -68,7 +68,7 @@ public class TableFragment extends Fragment {
         activity= (MainActivity) requireActivity();
         soundActivator=new SoundActivator();
         DBMonopoly db=DBMonopoly.getInstance(activity);
-        Repository repo=new Repository(activity,db.getDaoProperty(),db.getDaoPlayer(), db.getDaoCard());
+        Repository repo=new Repository(activity,db.getDaoProperty(),db.getDaoPlayer(), db.getDaoCard(), db.getDaoGame());
         propertyModel=PropertyModel.getModel(repo, activity);
         model=GameModel.getModel(repo,activity);
         ((MyApplication)activity.getApplication()).getExecutorService().execute(()->{
@@ -97,12 +97,13 @@ public class TableFragment extends Fragment {
             else Toast.makeText(activity,"Niste platili dazbine!",Toast.LENGTH_SHORT).show();
             return false;
         },()->{
-            soundActivator.start(activity);
+            if(model.isPaid()){
+                soundActivator.start(activity);
+            }
             return false;
         });
 
     }
-
 
 
     @Override
@@ -110,7 +111,7 @@ public class TableFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         amb=FragmentTableBinding.inflate(inflater,container,false);
-        TypedArray images=getResources().obtainTypedArray(R.array.ids);
+//        TypedArray images=getResources().obtainTypedArray(R.array.ids);
 
         timer=new Timer();
 
@@ -120,13 +121,8 @@ public class TableFragment extends Fragment {
         model.getTimeString().observe(getViewLifecycleOwner(),e->{
             amb.timer.setText(e);
         });
-        for(int i=0;i<images.length();i++){
-            int id=images.getResourceId(i,0);
-            int index=i;
-            int start=R.id.start;
-
-            amb.getRoot().findViewById(id).setOnClickListener(e->{
-                propertyModel.getProperty(index).observe(getViewLifecycleOwner(),k->{
+        amb.board.setCallback((index)->{
+            propertyModel.getProperty(index).observe(getViewLifecycleOwner(),k->{
                     ((MyApplication)activity.getApplication()).getExecutorService().execute(()-> {
                         Player p=model.getPlayer(model.getLastPlayer());
                         if(p.getPosition()!=index) model.setAbleToBuy(false);
@@ -134,8 +130,24 @@ public class TableFragment extends Fragment {
                         mainHanfler.post(()->RouterUtility.route(controller,k, model.getLastPlayer()));
                     });
                 });
-            });
-        }
+        });
+        amb.board.setOnTouchListener(amb.board.listener);
+//        for(int i=0;i<images.length();i++){
+//            int id=images.getResourceId(i,0);
+//            int index=i;
+//            int start=R.id.start;
+//
+//            amb.getRoot().findViewById(id).setOnClickListener(e->{
+//                propertyModel.getProperty(index).observe(getViewLifecycleOwner(),k->{
+//                    ((MyApplication)activity.getApplication()).getExecutorService().execute(()-> {
+//                        Player p=model.getPlayer(model.getLastPlayer());
+//                        if(p.getPosition()!=index) model.setAbleToBuy(false);
+//                        else model.setAbleToBuy(true);
+//                        mainHanfler.post(()->RouterUtility.route(controller,k, model.getLastPlayer()));
+//                    });
+//                });
+//            });
+//        }
 
         if(model.isMoved()){
             model.setMoved(false);
@@ -153,22 +165,26 @@ public class TableFragment extends Fragment {
         String[]colors=getResources().getStringArray(R.array.colors);
 
         model.getPlayers().observe(getViewLifecycleOwner(),e->{
-            TypedArray img=getResources().obtainTypedArray(R.array.ids);
-            ImageView k=((ImageView)amb.getRoot().findViewById(img.getResourceId(model.getOldPossition(),0)));
-            k.clearColorFilter();
+//            TypedArray img=getResources().obtainTypedArray(R.array.ids);
+//            ImageView k=((ImageView)amb.getRoot().findViewById(img.getResourceId(model.getOldPossition(),0)));
+//            k.clearColorFilter();
+            amb.board.clearFilter(model.getOldPossition());
+            amb.board.invalidate();
             ((MyApplication)activity.getApplication()).getExecutorService().execute(()->{
                 for(int j=0;j<model.getUserCount();j++){
                     Player p=model.getPlayer(j);
                     int index=j;
                     if(p.getMoney()>=0)
                         mainHanfler.post(()->{
-                            ((ImageView)amb.getRoot().findViewById(img.getResourceId(e.get(index).getPosition(),0))).setColorFilter(Color.parseColor(colors[index]),
-                                    PorterDuff.Mode.MULTIPLY);
+                            amb.board.useFilter(e.get(index).getPosition(),index);
+                            amb.board.invalidate();
+//                            ((ImageView)amb.getRoot().findViewById(img.getResourceId(e.get(index).getPosition(),0))).setColorFilter(Color.parseColor(colors[index]),
+//                                    PorterDuff.Mode.MULTIPLY);
                         });
 
 
                 }
-                mainHanfler.post(()-> img.recycle());
+//                mainHanfler.post(()-> img.recycle());
             });
 
 
@@ -198,7 +214,7 @@ public class TableFragment extends Fragment {
             });
             return true;
         });
-        images.recycle();
+//        images.recycle();
         return amb.getRoot();
     }
 

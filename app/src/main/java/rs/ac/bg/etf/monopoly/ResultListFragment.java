@@ -8,12 +8,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import rs.ac.bg.etf.monopoly.databinding.FragmentBlankBinding;
-
-public class BlankFragment extends Fragment {
+import rs.ac.bg.etf.monopoly.databinding.ResultListFragmentBinding;
 
 
-    FragmentBlankBinding amb;
+public class ResultListFragment extends Fragment {
+
+
+    ResultListFragmentBinding amb;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -26,7 +27,7 @@ public class BlankFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        amb=FragmentBlankBinding.inflate(inflater,container,false);
+        amb=ResultListFragmentBinding.inflate(inflater,container,false);
 
         return amb.getRoot();
     }

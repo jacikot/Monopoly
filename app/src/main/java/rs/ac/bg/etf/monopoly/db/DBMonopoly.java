@@ -6,15 +6,16 @@ import androidx.room.RoomDatabase;
 
 import rs.ac.bg.etf.monopoly.MainActivity;
 
-@Database(entities = {Property.class, Player.class, Card.class},version = 1, exportSchema = false)
+@Database(entities = {Property.class, Player.class, Card.class, Game.class},version = 1, exportSchema = false)
 public abstract class DBMonopoly extends RoomDatabase {
 
     public abstract PropertyDAO getDaoProperty();
     public abstract PlayerDAO getDaoPlayer();
     public abstract CardDAO getDaoCard();
+    public abstract GameDAO getDaoGame();
 
     private static DBMonopoly instance=null;
-    private static final String DBname="monopoly-database-prep";
+    private static final String DBname="monopoly-database-prep2";
 
     public static DBMonopoly getInstance(MainActivity activity){
         if(instance==null){

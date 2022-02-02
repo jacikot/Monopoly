@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
@@ -14,6 +15,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import androidx.annotation.Nullable;
+import androidx.core.content.res.ResourcesCompat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +30,12 @@ public class BoardView extends View {
     Drawable center;
     String[]colors;
     private void init(Context context) {
+        linePaint = new Paint();
+        linePaint.setStrokeWidth(5);
+        linePaint.setColor(ResourcesCompat.getColor(
+                getResources(),
+                R.color.black,
+                null));
         colors=getResources().getStringArray(R.array.colors);
         TypedArray images=context.getResources().obtainTypedArray(R.array.images);
         center=context.getResources().obtainTypedArray(R.array.monopolyCover).getDrawable(0);
@@ -85,36 +93,46 @@ public class BoardView extends View {
         }
     }
 
+    private Paint linePaint = null;
+
+    @Override
+    public boolean performClick() {
+        return super.performClick();
+    }
+
+    int partition;
+
+    private void drawField(Canvas canvas,MyImage img){
+        canvas.drawRect(img.x,img.y,img.x+img.w*partition,img.y+img.h*partition,linePaint);
+        img.d.setBounds(img.x+1,img.y+1,img.x+img.w*partition-1,img.y+img.h*partition-1);
+        img.d.draw(canvas);
+    }
     @Override
     protected void onDraw(Canvas canvas) {
         int size=(canvas.getHeight()>canvas.getWidth())?canvas.getWidth():canvas.getHeight();
-        int partition=size/59;
+        partition=size/59;
         int x=(size%59+canvas.getWidth()-size)/2;
         int y=(size%59+canvas.getHeight()-size)/2;
         center.setBounds(x+partition*7,y+partition*7,x+partition*52,y+partition*52);
         center.draw(canvas);
         for(int i=20;i<30;i++){
             imgs.get(i).setCoord(x,y);
-            imgs.get(i).d.setBounds(x,y,x+imgs.get(i).w*partition,y+imgs.get(i).h*partition);
-            imgs.get(i).d.draw(canvas);
+            drawField(canvas,imgs.get(i));
             x+=imgs.get(i).w*partition;
         }
         for(int i=30;i<40;i++){
             imgs.get(i).setCoord(x,y);
-            imgs.get(i).d.setBounds(x,y,x+imgs.get(i).w*partition,y+imgs.get(i).h*partition);
-            imgs.get(i).d.draw(canvas);
+            drawField(canvas,imgs.get(i));
             y+=imgs.get(i).h*partition;
         }
         for(int i=0;i<10;i++){
             imgs.get(i).setCoord(x,y);
-            imgs.get(i).d.setBounds(x,y,x+imgs.get(i).w*partition,y+imgs.get(i).h*partition);
-            imgs.get(i).d.draw(canvas);
+            drawField(canvas,imgs.get(i));
             x-=imgs.get(i+1).w*partition;
         }
         for(int i=10;i<20;i++){
             imgs.get(i).setCoord(x,y);
-            imgs.get(i).d.setBounds(x,y,x+imgs.get(i).w*partition,y+imgs.get(i).h*partition);
-            imgs.get(i).d.draw(canvas);
+            drawField(canvas,imgs.get(i));
             y-=imgs.get(i+1).h*partition;
         }
 
@@ -134,17 +152,20 @@ public class BoardView extends View {
     public OnTouchListener listener= new OnTouchListener() {
         @Override
         public boolean onTouch(View v, MotionEvent event) {
-            float x=event.getX(event.getActionIndex());
-            float y=event.getY(event.getActionIndex());
-            int index=0;
-            for(MyImage i:imgs){
-                if(i.x>=x && (i.x+i.w)<x && i.y>=y && (i.y+i.h)<y){
-                    if(callback!=null) callback.call(index);
-                    break;
+            if(event.getActionMasked()==MotionEvent.ACTION_DOWN){
+                float x=event.getX(event.getActionIndex());
+                float y=event.getY(event.getActionIndex());
+                int index=0;
+                for(MyImage i:imgs){
+                    if(i.x<=x && (i.x+i.w*partition)>x && i.y<=y && (i.y+i.h*partition)>y){
+                        if(callback!=null) callback.call(index);
+                        break;
+                    }
+                    index++;
                 }
-                index++;
+                return true;
             }
-            return true;
+            return false;
         }
     };
 

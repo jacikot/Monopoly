@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
         amb=ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(amb.getRoot());
         database=DBMonopoly.getInstance(this);
-        Repository repo=new Repository(this,database.getDaoProperty(),database.getDaoPlayer(),database.getDaoCard());
+        Repository repo=new Repository(this,database.getDaoProperty(),database.getDaoPlayer(),database.getDaoCard(),database.getDaoGame());
         repo.getProperty(0).observe(this,e->{
             if(e==null){
                 repo.initProperties(true);
