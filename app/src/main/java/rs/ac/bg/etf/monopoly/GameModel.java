@@ -26,6 +26,7 @@ import rs.ac.bg.etf.monopoly.db.Move;
 import rs.ac.bg.etf.monopoly.db.Player;
 import rs.ac.bg.etf.monopoly.db.Property;
 import rs.ac.bg.etf.monopoly.db.Repository;
+import rs.ac.bg.etf.monopoly.db.Selling;
 import rs.ac.bg.etf.monopoly.property.PropertyModel;
 
 public class GameModel extends ViewModel {
@@ -68,6 +69,19 @@ public class GameModel extends ViewModel {
 
     public void setMoves(List<Move> moves) {
         this.moves = moves;
+    }
+
+    public void buy(){
+        currentMove.setBuyAction(1);
+    }
+
+    public void open(int id){
+        currentMove.setCardOpen(id);
+    }
+
+    public void addSelling(int property){
+        Selling s=new Selling(property,currentMove.getIdMove());
+        currentMove.addSelling(s);
     }
 
     public Timer getTimer() {
@@ -268,7 +282,8 @@ public class GameModel extends ViewModel {
         if(currentMove!=null){
             moves.add(currentMove);
         }
-        currentMove=new Move();
+        currentMove=new Move(moves.size());
+        currentMove.setGame(currentGame);
         int dice1=((int)(Math.random()*6))+1;
         int dice2=((int)(Math.random()*6))+1;
 

@@ -111,6 +111,7 @@ public class OpenCardFragment extends Fragment {
                 Property p=propertyModel.getPropertyBlocking(args.getIndex());
                 List<Card> cards=cardModel.getCardsType(p.getType()-3);
                 int random=(int)(Math.random()*cards.size());
+                model.open(random);
 //                int random=0;
                 model.setCardOpen(cards.get(random));
             });

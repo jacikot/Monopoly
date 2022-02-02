@@ -7,9 +7,8 @@ import androidx.room.PrimaryKey;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
+@Entity(primaryKeys ={"idMove","game"})
 public class Move {
-    @PrimaryKey(autoGenerate = true)
     int idMove;
 
     int game;
@@ -32,8 +31,8 @@ public class Move {
     }
 
     @Ignore
-    public Move(){
-
+    public Move(int idMove){
+        this.idMove=idMove;
     }
     public Move(int idMove, int game, int player, int positionTo, int buyAction, int cardOpen) {
         this.idMove = idMove;

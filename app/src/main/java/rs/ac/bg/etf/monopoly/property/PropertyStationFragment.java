@@ -85,6 +85,7 @@ public class PropertyStationFragment extends Fragment {
                 h.post(()->{
                     controller.navigateUp();
                 });
+                model.addSelling(args.getIndex());
                 model.setBought(true);
             });
         });

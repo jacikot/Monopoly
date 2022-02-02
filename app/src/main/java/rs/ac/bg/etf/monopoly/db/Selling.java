@@ -1,6 +1,7 @@
 package rs.ac.bg.etf.monopoly.db;
 
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 @Entity
@@ -10,6 +11,11 @@ public class Selling {
     int field;
     int move;
 
+    @Ignore
+    public Selling(int field, int move) {
+        this.field = field;
+        this.move = move;
+    }
     public Selling(int idSelling, int field, int move) {
         this.idSelling = idSelling;
         this.field = field;

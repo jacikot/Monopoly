@@ -86,6 +86,7 @@ public class PropertyBuyFragment extends Fragment {
                         RouterUtility.routeBuy(controller,p,player.getIndex());
 
                     });
+                    gameModel.buy();
                 }
                 else {
                     handler.post(()-> Toast.makeText(activity,"Nemate dovoljno novca!",Toast.LENGTH_SHORT).show());

@@ -17,7 +17,7 @@ public abstract class DBMonopoly extends RoomDatabase {
     public abstract SellingDao getSellingDao();
 
     private static DBMonopoly instance=null;
-    private static final String DBname="monopoly-database-prep6";
+    private static final String DBname="monopoly-database-prep7";
 
     public static DBMonopoly getInstance(MainActivity activity){
         if(instance==null){

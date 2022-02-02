@@ -87,6 +87,7 @@ public class PropertyDetailsFragment extends Fragment {
                         p.setHouses(p.getHouses() + 1);
                         propertyModel.update(p);
                         player.setMoney(player.getMoney() - p.getBuilding_price());
+                        model.buy();
                     }
                     else {
                         h.post(()-> Toast.makeText(activity,"Nemate dovoljno novca!",Toast.LENGTH_SHORT).show());
@@ -111,6 +112,7 @@ public class PropertyDetailsFragment extends Fragment {
                         p.setHouses(p.getHouses()+1);
                         propertyModel.update(p);
                         player.setMoney(player.getMoney()-p.getBuilding_price());
+                        model.buy();
                     }
                     else {
                         h.post(()-> Toast.makeText(activity,"Nemate dovoljno novca!",Toast.LENGTH_SHORT).show());
@@ -133,6 +135,7 @@ public class PropertyDetailsFragment extends Fragment {
                 h.post(()->{
                    controller.navigateUp();
                 });
+                model.addSelling(args.getIndex());
             });
         });
 
