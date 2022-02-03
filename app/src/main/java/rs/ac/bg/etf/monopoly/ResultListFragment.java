@@ -78,6 +78,10 @@ public class ResultListFragment extends Fragment {
             adapter.setGames(games);
             List<Player> players=model.getAllPlayersEveryGame();
             adapter.setPlayers(players);
+            adapter.setCallback(game->{
+                ResultListFragmentDirections.ActionSimulation dirs=ResultListFragmentDirections.actionSimulation(game);
+                controller.navigate(dirs);
+            });
             h.post(()->{
                 amb.recyclerView.setHasFixedSize(true);
                 amb.recyclerView.setAdapter(adapter);

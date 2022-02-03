@@ -2,6 +2,7 @@ package rs.ac.bg.etf.monopoly;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.telecom.Call;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -23,6 +24,15 @@ import rs.ac.bg.etf.monopoly.db.Player;
 public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.ResultHolder>{
     private List<Player> players=new ArrayList<>();
     private List<Game> games=new ArrayList<>();
+
+    interface Callback{
+        void call(int game);
+    }
+
+    Callback callback;
+    public void setCallback(Callback c){
+        callback=c;
+    }
 
 
 
@@ -84,6 +94,9 @@ public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.ResultHold
             builder.append(")\n");
         });
         amb.players.setText(builder.toString());
+        amb.content.setOnClickListener(e->{
+            callback.call(games.get(position).getIdGame());
+        });
 
     }
 

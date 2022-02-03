@@ -169,10 +169,21 @@
         android:id="@+id/blankFragment"
         android:name="rs.ac.bg.etf.monopoly.ResultListFragment"
         android:label="fragment_blank"
-        tools:layout="@layout/result_list_fragment" />
+        tools:layout="@layout/result_list_fragment" >
+        <action
+            android:id="@+id/action_simulation"
+            app:destination="@id/simulationFragment" />
+    </fragment>
     <fragment
         android:id="@+id/settingsFragment"
         android:name="rs.ac.bg.etf.monopoly.SettingsFragment"
         android:label="fragment_settings"
         tools:layout="@layout/fragment_settings" />
+    <fragment
+        android:id="@+id/simulationFragment"
+        android:name="rs.ac.bg.etf.monopoly.SimulationFragment"
+        android:label="SimulationFragment" >
+        <argument android:name="game"
+            app:argType="integer" />
+    </fragment>
 </navigation>
