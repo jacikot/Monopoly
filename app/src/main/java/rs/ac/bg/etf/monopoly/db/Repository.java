@@ -74,6 +74,10 @@ public class Repository {
         selling.deleteAll();
     }
 
+    public List<Move> getMoves(int game){
+       return move.getAllMoves(game);
+    }
+
     public void insert(Property p){
         property.insert(p);
     }

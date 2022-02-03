@@ -84,6 +84,10 @@ public class GameModel extends ViewModel {
         currentMove.addSelling(s);
     }
 
+    public List<Move> getMoves(int game){
+        return repo.getMoves(game);
+    }
+
     public Timer getTimer() {
         return timer;
     }

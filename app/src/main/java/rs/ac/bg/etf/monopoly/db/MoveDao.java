@@ -5,6 +5,8 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 
+import java.util.List;
+
 @Dao
 public interface MoveDao {
 
@@ -13,4 +15,7 @@ public interface MoveDao {
 
     @Query("DELETE FROM Move")
     void deleteAll();
+
+    @Query("SELECT * FROM Move WHERE game=:g")
+    List<Move> getAllMoves(int g);
 }
