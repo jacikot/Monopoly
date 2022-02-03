@@ -32,4 +32,8 @@ public class CardModel extends ViewModel{
         };
         return new ViewModelProvider(activity, factory).get(CardModel.class);
     }
+
+    public Card getCard(int id){
+        return repo.getCard(id);
+    }
 }

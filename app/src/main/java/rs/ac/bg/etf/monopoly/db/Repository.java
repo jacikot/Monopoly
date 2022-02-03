@@ -78,6 +78,10 @@ public class Repository {
        return move.getAllMoves(game);
     }
 
+    public Card getCard(int id){
+        return card.getCard(id);
+    }
+
     public void insert(Property p){
         property.insert(p);
     }

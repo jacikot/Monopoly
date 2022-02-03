@@ -16,4 +16,7 @@ public interface CardDAO {
     @Query("SELECT * FROM Card WHERE type=:t")
     public List<Card> getCardsForType(int t);
 
+    @Query("SELECT * FROM Card WHERE id=:id")
+    public Card getCard(int id);
+
 }

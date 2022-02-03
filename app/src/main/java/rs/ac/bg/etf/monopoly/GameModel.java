@@ -249,6 +249,7 @@ public class GameModel extends ViewModel {
         currentGame=repo.getNextGame()-1;
         playerCnt=repo.getAllPlayers(currentGame).size();
         repo.initProperties(false);
+        moneyFromTaxes=0;
         ableToBuy=false;
         bought=false;
         paid=true;
@@ -300,11 +301,11 @@ public class GameModel extends ViewModel {
         while(!finish.get()){
             lastPlayed=currentUser;
             e.set(repo.getPlayer(currentUser,currentGame));
+            currentMove.setPlayer(e.get().getIndex());
             if(e.get().getPrison()>0 || e.get().getMoney()==-1){
                 attempts=0;
                 if(e.get().getMoney()!=-1) e.get().setPrison(e.get().getPrison()-1);
                 currentUser=(currentUser+1)%playerCnt;
-                currentMove.setPlayer(currentUser);
             }
             else{
                 oldPossition=e.get().getPosition();
@@ -316,7 +317,7 @@ public class GameModel extends ViewModel {
                 attempts++;
                 if(dice1!=dice2){
                     currentUser=(currentUser+1)%playerCnt;
-                    currentMove.setPlayer(currentUser);
+
                     attempts=0;
                 }
                 else if(attempts>2){
@@ -328,7 +329,6 @@ public class GameModel extends ViewModel {
                         e.get().setPosition(10); //zatvor
                     }
                     currentUser=(currentUser+1)%playerCnt;
-                    currentMove.setPlayer(currentUser);
                     attempts=0;
                 }
                 finish.set(true);

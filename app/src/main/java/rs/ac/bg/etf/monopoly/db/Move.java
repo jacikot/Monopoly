@@ -15,7 +15,7 @@ public class Move {
     int player;
     int positionTo;
     int buyAction;
-    int cardOpen;
+    int cardOpen=-1;
 
     @Ignore
     List<Selling> list=new ArrayList<>();
@@ -32,6 +32,7 @@ public class Move {
 
     @Ignore
     public Move(int idMove){
+
         this.idMove=idMove;
     }
     public Move(int idMove, int game, int player, int positionTo, int buyAction, int cardOpen) {
