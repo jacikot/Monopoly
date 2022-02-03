@@ -79,13 +79,19 @@ public class TableFragment extends Fragment {
                         db.getDaoGame(),db.getDaoMove(),db.getSellingDao());
         propertyModel=PropertyModel.getModel(repo, activity);
         model=GameModel.getModel(repo,activity);
-        ((MyApplication)activity.getApplication()).getExecutorService().execute(()->{
-            model.startGame();
-        });
 
         timer=new Timer();
         model.setTimer(timer);
         model.setFinalTime(new Date().getTime()+model.getSePreferences().getInt(SettingsFragment.TIME_KEY,2)*60*1000);
+
+
+        if(!model.getSePreferences().getBoolean(GameModel.GAME_STARTED,false)){
+            ((MyApplication)activity.getApplication()).getExecutorService().execute(()->{
+                model.startGame();
+            });
+        }
+
+
         startTimer();
         callbackEnd=()->{
             if(model.isPaid()){
@@ -115,6 +121,11 @@ public class TableFragment extends Fragment {
 
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        timer.cancel();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -127,8 +138,9 @@ public class TableFragment extends Fragment {
         getViewLifecycleOwner().getLifecycle().addObserver(soundActivator);
 
         if(model.getSePreferences().getBoolean(SettingsFragment.TIME_UPDATED,false)){
-            model.getSePreferences().edit().putBoolean(SettingsFragment.TIME_UPDATED,false).commit();
+
             model.setFinalTime(new Date().getTime()+model.getSePreferences().getInt(SettingsFragment.TIME_KEY,2)*60*1000);
+            model.getSePreferences().edit().putBoolean(SettingsFragment.TIME_UPDATED,false).commit();
             long elapsed = model.getFinalTime()-new Date().getTime();
 
             int minutes = (int) ((elapsed / (1000 * 60)) % 60);
@@ -213,11 +225,17 @@ public class TableFragment extends Fragment {
         amb.topAppBar.getMenu().getItem(1).setOnMenuItemClickListener(e-> {
             ((MyApplication)activity.getApplication()).getExecutorService().execute(()->{
                 Player current= model.getPlayer(model.getLastPlayer());
-                String msg="Na racunu imate: "+current.getMoney()+
-                        "\nNovac sakupljen od poreza: "+model.getMoneyFromTaxes();
+                List<Property> properties=propertyModel.getOfHolder(current.getIndex());
+                StringBuilder msg=new StringBuilder("Na potezu je korisnik: "+current.getName()+
+                        "\nNa racunu imate: "+current.getMoney());
+                msg.append("\nU posedstvu imate: "+properties.size()+" poseda");
+                properties.forEach(p->{
+                    msg.append("\nPosed broj: "+p.getId()+"(kuce "+((p.getHouses()<5)?p.getHouses():0)+")"+"(hotel "+((p.getHouses()==5)?1:0)+")");
+                });
+                msg.append("\nNovac sakupljen od poreza na talonu: "+model.getMoneyFromTaxes());
                 mainHanfler.post(()->new MaterialAlertDialogBuilder(activity)
                         .setTitle("Novac")
-                        .setMessage(msg)
+                        .setMessage(msg.toString())
                         .setNeutralButton((CharSequence) "Cancel", (dialog, which) -> {
                             dialog.cancel();
                         }).show());
@@ -231,6 +249,7 @@ public class TableFragment extends Fragment {
         });
 //        images.recycle();
         amb.topAppBar.setNavigationOnClickListener(e->{
+            model.getSePreferences().edit().putBoolean("GAME_STARTED",false).commit();
             timer.cancel();
             controller.popBackStack();
             controller.navigateUp();

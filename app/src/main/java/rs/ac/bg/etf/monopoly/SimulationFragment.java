@@ -107,7 +107,9 @@ public class SimulationFragment extends Fragment {
                     }).findFirst().orElse(null);
                     if(player.getPrison()>0)player.setPrison(0);
                     AtomicReference<Integer> finish =new AtomicReference<>(0);
-                    moveOnBoard(finish,player,move.getPositionTo(),player.getPosition(),players);
+                    int oldPos=player.getPosition();
+                    player.setPosition(move.getPositionTo());
+                    moveOnBoard(finish,player,move.getPositionTo(),oldPos,players);
                     if(move.getCardOpen()!=-1){
                         Card card=cardModel.getCard(move.getCardOpen());
                         execute(card,player);

@@ -33,7 +33,7 @@ public class GameModel extends ViewModel {
 
     private static final String  KEY_USER="currentUser";
     private static final String  KEY_DICE="dice";
-    private static final String KEY_TIME="time";
+    public static final String KEY_TIME="time";
 
     private Move currentMove;
     private List<Move>moves;
@@ -123,8 +123,9 @@ public class GameModel extends ViewModel {
     }
 
     public void setFinalTime(long finalTime) {
-        preferences.edit().putLong(KEY_TIME,finalTime).commit();
-        this.finalTime=finalTime;
+        if(!preferences.getBoolean(GAME_STARTED,false)||preferences.getBoolean(SettingsFragment.TIME_UPDATED,false))
+            preferences.edit().putLong(KEY_TIME,finalTime).commit();
+        this.finalTime=preferences.getLong(KEY_TIME,finalTime);
     }
 
     public boolean isMoved() {
@@ -221,7 +222,10 @@ public class GameModel extends ViewModel {
         return worth;
     }
 
+    public static final String GAME_STARTED="GAME_STARTED";
+
     public void finishGame(){
+        preferences.edit().putBoolean(GAME_STARTED,false).commit();
         repo.finishCurrentGame();
         repo.getAllPlayers(currentGame).forEach(p->{
             p.setEvaluation(calculateWorth(p));
@@ -246,7 +250,9 @@ public class GameModel extends ViewModel {
         repo.insertPlayer(list);
     }
     public void startGame(){
+        preferences.edit().putBoolean(GAME_STARTED,true).commit();
         currentGame=repo.getNextGame()-1;
+        currentMove=null;
         playerCnt=repo.getAllPlayers(currentGame).size();
         repo.initProperties(false);
         moneyFromTaxes=0;
